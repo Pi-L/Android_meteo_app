@@ -16,16 +16,22 @@ import info.legeay.meteo.R;
 import info.legeay.meteo.databinding.ActivityMainBinding;
 import info.legeay.meteo.util.Network;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final String KEY_PREFIX = "main_";
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
@@ -33,8 +39,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewCityName;
     private TextView textViewInternetKO;
     private LinearLayout linearlayoutMeteoDisplay;
+    private EditText editTextMessage;
 
-    private Button buttonFavorite;
+    private FloatingActionButton buttonFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         this.textViewInternetKO = findViewById(R.id.textview_internet_ko);
         this.linearlayoutMeteoDisplay = findViewById(R.id.linearlayout_meteo_display);
         this.buttonFavorite = findViewById(R.id.button_favorite);
+        this.editTextMessage = findViewById(R.id.edittext_message);
 
         this.setEvents();
 
@@ -114,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
     private void setEvents() {
         this.buttonFavorite.setOnClickListener(view -> {
             Intent intent = new Intent(this, FavoriteActivity.class);
+            intent.putExtra(String.format("%smessage", KEY_PREFIX), this.editTextMessage.getText().toString());
             startActivity(intent);
         });
 

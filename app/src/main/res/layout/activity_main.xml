@@ -2,7 +2,8 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_main"
@@ -91,16 +92,33 @@
 
     </LinearLayout>
 
-    <Button
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/linearlayout_meteo_display">
+
+        <EditText
+            android:id="@+id/edittext_message"
+            android:layout_width="160dp"
+            android:layout_height="40dp"
+            android:layout_centerInParent="true"
+            android:hint="Votre message"
+            android:textSize="15sp"
+            />
+    </RelativeLayout>
+
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_favorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Favoris"
-        android:textColor="@color/white"
-        android:textSize="@dimen/button_font_size"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin" />
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        app:tint="@color/white"
+        app:backgroundTint="@color/colorAccent"
+        app:srcCompat="@drawable/ic_heart_24" />
 
 </RelativeLayout>

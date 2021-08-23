@@ -29,12 +29,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
+                app:title="Favoris"
                 app:popupTheme="@style/PopupOverlay" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_scrolling" />
+    <include layout="@layout/favorite_content_scrolling" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_favorite"
@@ -43,6 +44,8 @@
         android:layout_marginEnd="@dimen/fab_margin"
         app:layout_anchor="@id/appbar_favorite"
         app:layout_anchorGravity="bottom|end"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        app:srcCompat="@android:drawable/ic_dialog_email"
+        app:tint="@color/white"
+        app:backgroundTint="@color/colorAccent" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
