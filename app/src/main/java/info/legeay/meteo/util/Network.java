@@ -11,7 +11,7 @@ public class Network {
 
         ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         if(connectivityManager.getActiveNetworkInfo() == null || !connectivityManager.getActiveNetworkInfo().isConnected()) return false;
-        //return true;
+
         String command = "ping -c 1 google.com";
         try {
             return Runtime.getRuntime().exec(command).waitFor() == 0;

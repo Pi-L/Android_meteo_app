@@ -18,6 +18,7 @@ import info.legeay.meteo.util.Network;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +33,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewInternetKO;
     private LinearLayout linearlayoutMeteoDisplay;
 
+    private Button button1;
+    private Button button2;
+    private Button button3;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,8 +50,14 @@ public class MainActivity extends AppCompatActivity {
         this.textViewInternetKO = findViewById(R.id.textview_internet_ko);
         this.linearlayoutMeteoDisplay = findViewById(R.id.linearlayout_meteo_display);
 
+        this.button1 = findViewById(R.id.button_1);
+        this.button2 = findViewById(R.id.button_2);
+        this.button3 = findViewById(R.id.button_3);
+
+        this.setButtonsEvents();
+
         this.textViewCityName.setText(R.string.city_name);
-        
+
         setPageVisibility();
 
         Toast.makeText(this,
@@ -102,5 +113,25 @@ public class MainActivity extends AppCompatActivity {
         this.textViewInternetKO.setVisibility(View.VISIBLE);
         this.linearlayoutMeteoDisplay.setVisibility(View.GONE);
 
+    }
+
+    private void setButtonsEvents() {
+        this.button1.setOnClickListener(view -> {
+            Toast.makeText(this,
+                    "Clic sur bouton 1",
+                    Toast.LENGTH_SHORT).show();
+        });
+
+        this.button2.setOnClickListener(view -> {
+            Toast.makeText(this,
+                    "Clic sur bouton 2",
+                    Toast.LENGTH_SHORT).show();
+        });
+
+        this.button3.setOnClickListener(view -> {
+            Toast.makeText(this,
+                    "Clic sur bouton 3",
+                    Toast.LENGTH_SHORT).show();
+        });
     }
 }
