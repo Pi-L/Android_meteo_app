@@ -1,4 +1,4 @@
-package info.legeay.meteo;
+package info.legeay.meteo.activity;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,10 +11,14 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import info.legeay.meteo.R;
 import info.legeay.meteo.databinding.ActivityMainBinding;
+import info.legeay.meteo.util.Network;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
 
     private TextView textViewCityName;
+    private TextView textViewInternetKO;
+    private LinearLayout linearlayoutMeteoDisplay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +42,23 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
 
         this.textViewCityName = findViewById(R.id.textview_city_name);
-        this.textViewCityName.setText(R.string.city_name);
+        this.textViewInternetKO = findViewById(R.id.textview_internet_ko);
+        this.linearlayoutMeteoDisplay = findViewById(R.id.linearlayout_meteo_display);
 
-        Toast.makeText(this, this.textViewCityName.getText(), Toast.LENGTH_LONG).show();
+        this.textViewCityName.setText(R.string.city_name);
+        
+        setPageVisibility();
+
+        Toast.makeText(this,
+                String.format("%s internet?: %s", this.textViewCityName.getText(), Network.isInternetAvailable(this) ? "oui" : "non"),
+                Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        setPageVisibility();
     }
 
     @Override
@@ -68,5 +88,19 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    private void setPageVisibility() {
+        boolean isInternetAccessible = Network.isInternetAvailable(this);
+
+        if(isInternetAccessible) {
+            this.textViewInternetKO.setVisibility(View.GONE);
+            this.linearlayoutMeteoDisplay.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        this.textViewInternetKO.setVisibility(View.VISIBLE);
+        this.linearlayoutMeteoDisplay.setVisibility(View.GONE);
+
     }
 }

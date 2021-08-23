@@ -10,6 +10,7 @@
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="city_name">New York</string>
-    <string name="city_desc">Ensoleillé</string>
+    <string name="city_desc">Sunny</string>
     <string name="city_temp">24°C</string>
+    <string name="internet_KO">No internet connection</string>
 </resources>

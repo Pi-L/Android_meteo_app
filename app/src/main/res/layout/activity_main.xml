@@ -15,7 +15,19 @@
         android:layout_alignParentTop="true"
         />
 
+    <TextView
+        android:id="@+id/textview_internet_ko"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/internet_KO"
+        android:textSize="30sp"
+        android:textColor="@color/colorAccent"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        />
+
     <LinearLayout
+        android:id="@+id/linearlayout_meteo_display"
         android:layout_height="230dp"
         android:layout_width="match_parent"
         android:orientation="vertical"
@@ -80,6 +92,7 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/button_favorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Favoris"
