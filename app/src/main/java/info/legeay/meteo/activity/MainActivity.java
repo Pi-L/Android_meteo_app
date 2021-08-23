@@ -1,5 +1,6 @@
 package info.legeay.meteo.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -33,9 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewInternetKO;
     private LinearLayout linearlayoutMeteoDisplay;
 
-    private Button button1;
-    private Button button2;
-    private Button button3;
+    private Button buttonFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +48,9 @@ public class MainActivity extends AppCompatActivity {
         this.textViewCityName = findViewById(R.id.textview_city_name);
         this.textViewInternetKO = findViewById(R.id.textview_internet_ko);
         this.linearlayoutMeteoDisplay = findViewById(R.id.linearlayout_meteo_display);
+        this.buttonFavorite = findViewById(R.id.button_favorite);
 
-        this.button1 = findViewById(R.id.button_1);
-        this.button2 = findViewById(R.id.button_2);
-        this.button3 = findViewById(R.id.button_3);
-
-        this.setButtonsEvents();
+        this.setEvents();
 
         this.textViewCityName.setText(R.string.city_name);
 
@@ -115,23 +111,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void setButtonsEvents() {
-        this.button1.setOnClickListener(view -> {
-            Toast.makeText(this,
-                    "Clic sur bouton 1",
-                    Toast.LENGTH_SHORT).show();
+    private void setEvents() {
+        this.buttonFavorite.setOnClickListener(view -> {
+            Intent intent = new Intent(this, FavoriteActivity.class);
+            startActivity(intent);
         });
 
-        this.button2.setOnClickListener(view -> {
-            Toast.makeText(this,
-                    "Clic sur bouton 2",
-                    Toast.LENGTH_SHORT).show();
-        });
-
-        this.button3.setOnClickListener(view -> {
-            Toast.makeText(this,
-                    "Clic sur bouton 3",
-                    Toast.LENGTH_SHORT).show();
-        });
     }
 }

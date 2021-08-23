@@ -91,50 +91,16 @@
 
     </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/button_favorite"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Favoris"
+        android:textColor="@color/white"
+        android:textSize="@dimen/button_font_size"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:padding="@dimen/activity_vertical_margin"
-        >
-
-        <Button
-            android:id="@+id/button_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bouton 1"
-            android:textColor="@color/white"
-            android:textSize="@dimen/button_font_size"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin" />
-
-        <Button
-            android:id="@+id/button_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bouton 2"
-            android:textColor="@color/white"
-            android:textSize="@dimen/button_font_size"
-            android:layout_centerInParent="true"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin" />
-        <Button
-            android:id="@+id/button_3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:text="Bouton 3"
-            android:textColor="@color/white"
-            android:textSize="@dimen/button_font_size" />
-
-    </RelativeLayout>
-
-
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin" />
 
 </RelativeLayout>
