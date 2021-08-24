@@ -9,8 +9,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -61,17 +63,9 @@ public class FavoriteActivity extends AppCompatActivity {
 
         this.floatingActionButtonSearch = findViewById(R.id.floatingactionbutton_favorite_search);
 
-
-//        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar_favorite);
-//        myToolbar.setTitleTextColor(Color.WHITE);
-//        setSupportActionBar(myToolbar);
         this.setEvents();
 
-//        addCityById(4717560L);
-//        addCityById(2972191L);
-//        addCityById(5128581L);
-//        addCityById(2193733L);
-
+        this.attachItemTouchHelperToRecyclerView();
     }
 
     private void setEvents() {
@@ -105,8 +99,6 @@ public class FavoriteActivity extends AppCompatActivity {
 
                 alertDialog.dismiss();
             });
-
-
         });
     }
 
@@ -165,6 +157,26 @@ public class FavoriteActivity extends AppCompatActivity {
         );
     }
 
+    private void attachItemTouchHelperToRecyclerView() {
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
+                new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
+                      @Override
+                      public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull
+                                            RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                          return false;
+                      }
+                      @Override
+                      public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                          FavoriteAdapter.ViewHolder faViewHolder = (FavoriteAdapter.ViewHolder) viewHolder;
+                          FavoriteActivity.this.cityList.remove(faViewHolder.city);
+                          FavoriteActivity.this.favoriteAdapter.notifyDataSetChanged();
+                          Log.d("PIL", "onSwiped: ");
+                      }
+                  });
+
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+    }
+
     private void addCityById(Long id) {
 
         openWeatherMapAPIClient.weatherByCityId(id, response -> {
@@ -186,4 +198,5 @@ public class FavoriteActivity extends AppCompatActivity {
             }
         });
     }
+
 }
