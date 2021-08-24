@@ -9,7 +9,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 public class City {
 
 //    private Long id;
@@ -18,7 +17,7 @@ public class City {
     private String temperature;
     private int weatherIcon;
 
-//    private String xGpsPos;
-//    private String yGpsPos;
+    private final double lat;
+    private final double lon;
 
 }

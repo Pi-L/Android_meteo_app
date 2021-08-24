@@ -41,8 +41,8 @@ public class FavoriteActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_favorite);
 
-        cityList.add(new City("Montréal" , "Légères pluies" , "22°C" , R.drawable.weather_rainy_grey));
-        cityList.add(new City("New York" ,  "Ensoleillé" ,  "22°C" , R.drawable. weather_sunny_grey));
+        cityList.add(new City("Montréal" , "Légères pluies" , "22°C" , R.drawable.weather_rainy_grey, 40.716709, -74.005698));
+        cityList.add(new City("New York" ,  "Ensoleillé" ,  "22°C" , R.drawable. weather_sunny_grey, 40.716709, -74.005698));
 //        cityList.add(new City("Paris" ,  "Nuageux" ,  "24°C" , R.drawable. weather_foggy_grey));
 //        cityList.add(new City("Toulouse" ,  "Pluies modérées" ,  "20°C" , R.drawable. weather_rainy_grey));
 //        cityList.add(new City("Montréal" , "Légères pluies" , "22°C" , R.drawable.weather_rainy_grey));
@@ -99,7 +99,7 @@ public class FavoriteActivity extends AppCompatActivity {
                     return;
                 }
 
-                FavoriteActivity.this.cityList.add(new City(editTextCity.getText().toString(),  "Pluies modérées" ,  "20°C" , R.drawable. weather_rainy_grey));
+                FavoriteActivity.this.cityList.add(new City(editTextCity.getText().toString(),  "Pluies modérées" ,  "20°C" , R.drawable.weather_rainy_grey, 40.716709, -74.005698));
                 FavoriteActivity.this.favoriteAdapter.notifyDataSetChanged();
                 alertDialog.dismiss();
             });
