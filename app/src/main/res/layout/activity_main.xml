@@ -27,6 +27,16 @@
         android:layout_centerInParent="true"
         />
 
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/circularprogressindicator_main_loader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        app:trackThickness="5dp"
+        app:indicatorSize="100dp"/>
+
     <LinearLayout
         android:id="@+id/linearlayout_meteo_display"
         android:layout_height="230dp"

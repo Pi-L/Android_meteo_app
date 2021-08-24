@@ -40,6 +40,16 @@
         android:id= "@+id/favorite_recyclerview"
         />
 
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/circularprogressindicator_favorite_loader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        app:trackThickness="5dp"
+        app:indicatorSize="100dp"/>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingactionbutton_favorite_search"
         android:layout_width="wrap_content"

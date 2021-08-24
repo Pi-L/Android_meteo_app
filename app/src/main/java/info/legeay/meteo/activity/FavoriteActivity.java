@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -41,6 +42,7 @@ public class FavoriteActivity extends AppCompatActivity {
     private Handler handler;
 
     private FloatingActionButton floatingActionButtonSearch;
+    private CircularProgressIndicator circularProgressIndicatorLoader;
 
     private OpenWeatherMapAPIClient openWeatherMapAPIClient;
 
@@ -62,6 +64,7 @@ public class FavoriteActivity extends AppCompatActivity {
         this.recyclerView.setAdapter(this.favoriteAdapter);
 
         this.floatingActionButtonSearch = findViewById(R.id.floatingactionbutton_favorite_search);
+        this.circularProgressIndicatorLoader = findViewById(R.id.circularprogressindicator_favorite_loader);
 
         this.setEvents();
 
@@ -125,6 +128,7 @@ public class FavoriteActivity extends AppCompatActivity {
     }
 
     private void addCityByName(String cityName) {
+        this.circularProgressIndicatorLoader.setVisibility(View.VISIBLE);
 
         openWeatherMapAPIClient.weatherByCityName(
                 cityName,
@@ -146,10 +150,13 @@ public class FavoriteActivity extends AppCompatActivity {
 
                     } catch (JsonProcessingException e) {
                         Log.d("PIL", "##### addCityByName #### JsonProcessingException" + e.getMessage());
+                    } finally {
+                        this.circularProgressIndicatorLoader.setVisibility(View.GONE);
                     }
                 },
                 error -> {
                     Log.d("PIL", String.format("FavoriteActivity - addCityByName error: %s", error.getMessage()));
+                    this.circularProgressIndicatorLoader.setVisibility(View.GONE);
                     FavoriteActivity.this.handler.post(() ->
                             Toast.makeText(FavoriteActivity.this, String.format("Ville %s non trouvée", cityName), Toast.LENGTH_LONG).show());
 

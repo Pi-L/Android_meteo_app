@@ -32,6 +32,7 @@ import android.widget.TextView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.squareup.picasso.Picasso;
 
 
@@ -48,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imageViewCityWeatherIcon;
 
     private TextView textViewInternetKO;
+    private CircularProgressIndicator circularProgressIndicatorLoader;
+
     private LinearLayout linearlayoutMeteoDisplay;
     private EditText editTextMessage;
 
@@ -75,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
         this.imageViewCityWeatherIcon = findViewById(R.id.imageview_main_city_weather_icon) ;
 
         this.textViewInternetKO = findViewById(R.id.textview_internet_ko);
+        this.circularProgressIndicatorLoader = findViewById(R.id.circularprogressindicator_main_loader);
+
         this.linearlayoutMeteoDisplay = findViewById(R.id.linearlayout_meteo_display);
         this.buttonFavorite = findViewById(R.id.button_favorite);
         this.editTextMessage = findViewById(R.id.edittext_message);
@@ -126,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setActivityData() {
         if(!Network.isInternetAvailable(this)) return;
+        this.circularProgressIndicatorLoader.setVisibility(View.VISIBLE);
 
         openWeatherMapAPIClient.weatherByCityId(2972191L, response -> {
 
@@ -151,8 +157,12 @@ public class MainActivity extends AppCompatActivity {
 
             } catch (JsonProcessingException e) {
                 Log.d("PIL", e.getMessage());
+            } finally {
+                MainActivity.this.circularProgressIndicatorLoader.setVisibility(View.GONE);
             }
         });
+
+        // todo: manage on error
     }
 
     private void setPageVisibility() {
