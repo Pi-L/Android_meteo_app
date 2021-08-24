@@ -6,14 +6,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
 import info.legeay.meteo.R;
 import info.legeay.meteo.model.City;
+import info.legeay.meteo.util.Network;
 
 public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHolder> {
 
@@ -35,6 +38,9 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         City city = cityList.get(position);
+
+        holder.city = city;
+
         holder.textViewFavoriteCityName.setText(city.getName());
         holder.textViewFavoriteCityWeather.setText(city.getDescription());
         holder.imageViewFavoriteCityWeather.setImageDrawable(context.getDrawable(city.getWeatherIcon()));
@@ -45,7 +51,9 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
     public int getItemCount() {return this.cityList == null ? 0 : this.cityList.size();}
 
     // Classe holder qui contient la vue d’un item
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
+
+        public City city;
 
         public TextView textViewFavoriteCityName;
         public TextView textViewFavoriteCityWeather;
@@ -59,6 +67,27 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
             textViewFavoriteCityWeather = view.findViewById(R.id.textview_favorite_city_weather);
             imageViewFavoriteCityWeather = view.findViewById(R.id.imageview_favorite_city_weather);
             textViewFavoriteCityTemperature = view.findViewById(R.id.textview_favorite_city_temperature);
+
+            view.setOnLongClickListener(this);
+
+        }
+
+
+        @Override
+        public boolean onLongClick(View v) {
+
+            final AlertDialog alertDialog = new AlertDialog.Builder(FavoriteAdapter.this.context)
+                    .setTitle("Supprimer cette ville?")
+                    .setPositiveButton("SUPPRIMER", (dialog, which) -> {
+                        FavoriteAdapter.this.cityList.remove(this.city);
+                        FavoriteAdapter.this.notifyDataSetChanged();
+                    })
+                    .setNegativeButton("Annuler", (dialog, which) -> dialog.cancel())
+                    .create();
+
+            alertDialog.show();
+
+            return true;
         }
     }
 }

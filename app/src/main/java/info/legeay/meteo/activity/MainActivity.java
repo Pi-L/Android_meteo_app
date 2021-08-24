@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         setPageVisibility();
 
         Toast.makeText(this,
-                String.format("%s internet?: %s", this.textViewCityName.getText(), Network.isInternetAvailable(this) ? "oui" : "non"),
+                String.format("internet ok?: %s", Network.isInternetAvailable(this) ? "oui" : "non"),
                 Toast.LENGTH_LONG).show();
     }
 
