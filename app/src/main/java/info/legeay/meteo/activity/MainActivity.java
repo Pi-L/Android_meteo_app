@@ -15,19 +15,24 @@ import androidx.navigation.ui.NavigationUI;
 import info.legeay.meteo.R;
 import info.legeay.meteo.client.OpenWeatherMapAPIClient;
 import info.legeay.meteo.databinding.ActivityMainBinding;
+import info.legeay.meteo.dto.WeatherDTO;
+import info.legeay.meteo.model.City;
 import info.legeay.meteo.util.Network;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.squareup.picasso.Picasso;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -38,11 +43,17 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
 
     private TextView textViewCityName;
+    private TextView textViewCityWeatherDescription;
+    private TextView textViewCityTemperature;
+    private ImageView imageViewCityWeatherIcon;
+
     private TextView textViewInternetKO;
     private LinearLayout linearlayoutMeteoDisplay;
     private EditText editTextMessage;
 
     private FloatingActionButton buttonFavorite;
+
+    private Handler handler;
 
     private OpenWeatherMapAPIClient openWeatherMapAPIClient;
 
@@ -55,9 +66,14 @@ public class MainActivity extends AppCompatActivity {
         myToolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(myToolbar);
 
-        openWeatherMapAPIClient = new OpenWeatherMapAPIClient(this);
+        this.handler = new Handler();
+        this.openWeatherMapAPIClient = new OpenWeatherMapAPIClient(this);
 
-        this.textViewCityName = findViewById(R.id.textview_city_name);
+        this.textViewCityName = findViewById(R.id.textview_main_city_name);
+        this.textViewCityWeatherDescription = findViewById(R.id.textview_main_city_weather_description) ;
+        this.textViewCityTemperature = findViewById(R.id.textview_main_city_temperature) ;
+        this.imageViewCityWeatherIcon = findViewById(R.id.imageview_main_city_weather_icon) ;
+
         this.textViewInternetKO = findViewById(R.id.textview_internet_ko);
         this.linearlayoutMeteoDisplay = findViewById(R.id.linearlayout_meteo_display);
         this.buttonFavorite = findViewById(R.id.button_favorite);
@@ -65,17 +81,11 @@ public class MainActivity extends AppCompatActivity {
 
         this.setEvents();
 
-        this.textViewCityName.setText(R.string.city_name);
-
-//        openWeatherMapAPIClient.oneCall(47.390026, 0.688891, response -> {
-//            Log.d("PIL", "onCreate: "+response.toString());
-//        });
-
         setPageVisibility();
 
-        Toast.makeText(this,
-                String.format("internet ok?: %s", Network.isInternetAvailable(this) ? "oui" : "non"),
-                Toast.LENGTH_LONG).show();
+        setActivityData();
+
+
     }
 
     @Override
@@ -112,6 +122,37 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    private void setActivityData() {
+        if(!Network.isInternetAvailable(this)) return;
+
+        openWeatherMapAPIClient.weatherByCityId(2972191L, response -> {
+
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                WeatherDTO weatherDTO = mapper.readValue(response.toString(), WeatherDTO.class);
+
+                if(weatherDTO != null) {
+                    City city = weatherDTO.toCity();
+
+                    MainActivity.this.handler.post(() -> {
+
+                        MainActivity.this.textViewCityName.setText(city.getName());
+                        MainActivity.this.textViewCityWeatherDescription.setText(city.getWeatherDescription());
+                        MainActivity.this.textViewCityTemperature.setText(city.getCurrentTemperature());
+                        Picasso.get()
+                                .load(city.getWeatherIconUrl())
+                                .placeholder(R.drawable.weather_rainy_grey)
+                                .into(MainActivity.this.imageViewCityWeatherIcon);
+                    });
+                }
+                else Log.d("PIL", "weatherDTO == null");
+
+            } catch (JsonProcessingException e) {
+                Log.d("PIL", e.getMessage());
+            }
+        });
     }
 
     private void setPageVisibility() {

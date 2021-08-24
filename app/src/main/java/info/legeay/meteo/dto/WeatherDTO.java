@@ -30,8 +30,11 @@ public class WeatherDTO implements Serializable {
     private Weather[] weather;
     private Main main;
     private Wind wind;
+    private Integer cod;
 
     public City toCity() {
+
+        if(cod == 404) return null;
 
         boolean isWeatherArrayNotInitialised = this.weather == null || this.weather.length == 0;
         String iconTemplate = "https://openweathermap.org/img/wn/%s@2x.png";

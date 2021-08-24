@@ -1,12 +1,13 @@
 package info.legeay.meteo.activity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,6 +36,7 @@ public class FavoriteActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private FavoriteAdapter favoriteAdapter;
+    private Handler handler;
 
     private FloatingActionButton floatingActionButtonSearch;
 
@@ -48,24 +50,8 @@ public class FavoriteActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_favorite);
 
+        this.handler = new Handler();
         openWeatherMapAPIClient = new OpenWeatherMapAPIClient(this);
-
-//        cityList.add(new City(1L, "Montréal", "Légères pluies", "22°C", "https://openweathermap.org/img/wn/10d@2x.png", 40.716709, -74.005698));
-//        cityList.add(new City(2L, "New York", "Ensoleillé", "22°C", "https://openweathermap.org/img/wn/10d@2x.png", 40.716709, -74.005698));
-//        cityList.add(new City("Paris" ,  "Nuageux" ,  "24°C" , R.drawable. weather_foggy_grey));
-//        cityList.add(new City("Toulouse" ,  "Pluies modérées" ,  "20°C" , R.drawable. weather_rainy_grey));
-//        cityList.add(new City("Montréal" , "Légères pluies" , "22°C" , R.drawable.weather_rainy_grey));
-//        cityList.add(new City("New York" ,  "Ensoleillé" ,  "22°C" , R.drawable. weather_sunny_grey));
-//        cityList.add(new City("Paris" ,  "Nuageux" ,  "24°C" , R.drawable. weather_foggy_grey));
-//        cityList.add(new City("Toulouse" ,  "Pluies modérées" ,  "20°C" , R.drawable. weather_rainy_grey));
-//        cityList.add(new City("Montréal" , "Légères pluies" , "22°C" , R.drawable.weather_rainy_grey));
-//        cityList.add(new City("New York" ,  "Ensoleillé" ,  "22°C" , R.drawable. weather_sunny_grey));
-//        cityList.add(new City("Paris" ,  "Nuageux" ,  "24°C" , R.drawable. weather_foggy_grey));
-//        cityList.add(new City("Toulouse" ,  "Pluies modérées" ,  "20°C" , R.drawable. weather_rainy_grey));
-//        cityList.add(new City("Montréal" , "Légères pluies" , "22°C" , R.drawable.weather_rainy_grey));
-//        cityList.add(new City("New York" ,  "Ensoleillé" ,  "22°C" , R.drawable. weather_sunny_grey));
-//        cityList.add(new City("Paris" ,  "Nuageux" ,  "24°C" , R.drawable. weather_foggy_grey));
-//        cityList.add(new City("Toulouse" ,  "Pluies modérées" ,  "20°C" , R.drawable. weather_rainy_grey));
 
         this.recyclerView = findViewById(R.id.favorite_recyclerview);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
@@ -81,12 +67,11 @@ public class FavoriteActivity extends AppCompatActivity {
 //        setSupportActionBar(myToolbar);
         this.setEvents();
 
+//        addCityById(4717560L);
+//        addCityById(2972191L);
+//        addCityById(5128581L);
+//        addCityById(2193733L);
 
-        addCityByCoord(40.716709, -74.005698);
-        addCityByCoord(47.390026, 0.688891);
-        addCityByCoord(23.634501, -102.552784);
-        addCityByCoord(39.904211, 116.407395);
-        addCityByCoord(40.4167754, -3.7037902);
     }
 
     private void setEvents() {
@@ -116,8 +101,8 @@ public class FavoriteActivity extends AppCompatActivity {
                     return;
                 }
 
-                FavoriteActivity.this.cityList.add(new City(1L, editTextCity.getText().toString(), "Pluies modérées", "20°C", "https://openweathermap.org/img/wn/10d@2x.png", 40.716709, -74.005698));
-                FavoriteActivity.this.favoriteAdapter.notifyDataSetChanged();
+                FavoriteActivity.this.addCityByName(editTextCity.getText().toString());
+
                 alertDialog.dismiss();
             });
 
@@ -127,7 +112,62 @@ public class FavoriteActivity extends AppCompatActivity {
 
     private void addCityByCoord(Double lat, Double lon) {
 
-        openWeatherMapAPIClient.weather(lat, lon, response -> {
+        openWeatherMapAPIClient.weatherByCoord(lat, lon, response -> {
+
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                WeatherDTO weatherDTO = mapper.readValue(response.toString(), WeatherDTO.class);
+
+                if(weatherDTO != null) {
+                    FavoriteActivity.this.cityList.add(weatherDTO.toCity());
+                    FavoriteActivity.this.favoriteAdapter.notifyDataSetChanged();
+                }
+                else Log.d("PIL", "weatherDTO == null");
+
+            } catch (JsonProcessingException e) {
+                Log.d("PIL", e.getMessage());
+            } finally {
+                Log.d("PIL", FavoriteActivity.this.cityList.toString());
+            }
+        });
+    }
+
+    private void addCityByName(String cityName) {
+
+        openWeatherMapAPIClient.weatherByCityName(
+                cityName,
+                response -> {
+                    ObjectMapper mapper = new ObjectMapper();
+                    try {
+                        WeatherDTO weatherDTO = mapper.readValue(response.toString(), WeatherDTO.class);
+                        City city = weatherDTO != null ? weatherDTO.toCity() : null;
+
+                        if(city != null) {
+                            Log.d("PIL", "weatherDTO != null");
+                            FavoriteActivity.this.cityList.add(city);
+                            FavoriteActivity.this.favoriteAdapter.notifyDataSetChanged();
+                        } else {
+                            Log.d("PIL", "weatherDTO == null");
+                            FavoriteActivity.this.handler.post(() ->
+                                Toast.makeText(FavoriteActivity.this, String.format("Ville %s non trouvée", cityName), Toast.LENGTH_LONG).show());
+                        }
+
+                    } catch (JsonProcessingException e) {
+                        Log.d("PIL", "##### addCityByName #### JsonProcessingException" + e.getMessage());
+                    }
+                },
+                error -> {
+                    Log.d("PIL", String.format("FavoriteActivity - addCityByName error: %s", error.getMessage()));
+                    FavoriteActivity.this.handler.post(() ->
+                            Toast.makeText(FavoriteActivity.this, String.format("Ville %s non trouvée", cityName), Toast.LENGTH_LONG).show());
+
+                }
+        );
+    }
+
+    private void addCityById(Long id) {
+
+        openWeatherMapAPIClient.weatherByCityId(id, response -> {
 
             ObjectMapper mapper = new ObjectMapper();
             try {
