@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 import info.legeay.meteo.R;
@@ -42,9 +44,15 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
         holder.city = city;
 
         holder.textViewFavoriteCityName.setText(city.getName());
-        holder.textViewFavoriteCityWeather.setText(city.getDescription());
-        holder.imageViewFavoriteCityWeather.setImageDrawable(context.getDrawable(city.getWeatherIcon()));
-        holder.textViewFavoriteCityTemperature.setText(city.getTemperature());
+        holder.textViewFavoriteCityWeather.setText(city.getWeatherDescription());
+
+        Picasso.get()
+                .load(city.getWeatherIconUrl())
+                .placeholder(R.drawable.weather_rainy_grey)
+                .into(holder.imageViewFavoriteCityWeather);
+
+//        holder.imageViewFavoriteCityWeather.setImageDrawable(context.getDrawable(city.getWeatherIcon()));
+        holder.textViewFavoriteCityTemperature.setText(city.getCurrentTemperature());
     }
 
     @Override

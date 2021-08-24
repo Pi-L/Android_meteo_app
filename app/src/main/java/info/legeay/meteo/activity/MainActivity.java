@@ -13,6 +13,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import info.legeay.meteo.R;
+import info.legeay.meteo.client.OpenWeatherMapAPIClient;
 import info.legeay.meteo.databinding.ActivityMainBinding;
 import info.legeay.meteo.util.Network;
 
@@ -43,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton buttonFavorite;
 
+    private OpenWeatherMapAPIClient openWeatherMapAPIClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar_main);
         myToolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(myToolbar);
+
+        openWeatherMapAPIClient = new OpenWeatherMapAPIClient(this);
 
         this.textViewCityName = findViewById(R.id.textview_city_name);
         this.textViewInternetKO = findViewById(R.id.textview_internet_ko);
@@ -61,6 +66,10 @@ public class MainActivity extends AppCompatActivity {
         this.setEvents();
 
         this.textViewCityName.setText(R.string.city_name);
+
+//        openWeatherMapAPIClient.oneCall(47.390026, 0.688891, response -> {
+//            Log.d("PIL", "onCreate: "+response.toString());
+//        });
 
         setPageVisibility();
 

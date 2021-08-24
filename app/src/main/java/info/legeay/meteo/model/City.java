@@ -11,13 +11,25 @@ import lombok.Setter;
 @AllArgsConstructor
 public class City {
 
-//    private Long id;
+    private Long id;
     private String name;
-    private String description;
-    private String temperature;
-    private int weatherIcon;
+    private String weatherDescription;
+    private String currentTemperature;
+    private String weatherIconUrl;
 
     private final double lat;
     private final double lon;
 
+    @Override
+    public String toString() {
+        return "City{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", weatherDescription='" + weatherDescription + '\'' +
+                ", currentTemperature='" + currentTemperature + '\'' +
+                ", weatherIconUrl='" + weatherIconUrl + '\'' +
+                ", lat=" + lat +
+                ", lon=" + lon +
+                '}';
+    }
 }

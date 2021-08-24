@@ -28,9 +28,9 @@ public class OpenWeatherMapAPIClient {
 
     }
 
-    public void oneCall(double lat, double lon, Response.Listener<JSONObject> response) {
+    public void weather(double lat, double lon, Response.Listener<JSONObject> response) {
 
-        String url = String.format("https://api.openweathermap.org/data/2.5/onecall?lat=%s&lon=%s&appid=%s", lat, lon, context.getString(R.string.owm_api_key));
+        String url = String.format("https://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&appid=%s", lat, lon, context.getString(R.string.owm_api_key));
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET,
