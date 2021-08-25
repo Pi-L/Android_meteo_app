@@ -33,12 +33,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import info.legeay.meteo.R;
 import info.legeay.meteo.adapter.FavoriteAdapter;
 import info.legeay.meteo.client.OpenWeatherMapAPIClient;
+import info.legeay.meteo.database.DataBaseHelper;
 import info.legeay.meteo.dto.WeatherDTO;
 import info.legeay.meteo.model.City;
+import info.legeay.meteo.util.CityUtil;
 
 public class FavoriteActivity extends AppCompatActivity {
 
     public static final String KEY_PREFIX = "fav_";
+
+    private DataBaseHelper dataBaseHelper;
 
     private RecyclerView recyclerView;
     private FavoriteAdapter favoriteAdapter;
@@ -56,7 +60,8 @@ public class FavoriteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_favorite);
-
+//        this.deleteDatabase(DataBaseHelper.DATABASE_NAME);
+        this.dataBaseHelper = new DataBaseHelper(this);
         this.handler = new Handler();
         openWeatherMapAPIClient = new OpenWeatherMapAPIClient(this);
 
@@ -72,11 +77,24 @@ public class FavoriteActivity extends AppCompatActivity {
         this.setEvents();
 
         this.attachItemTouchHelperToRecyclerView();
+    }
 
-        addCityById(4717560L);
-        addCityById(2972191L);
-        addCityById(5128581L);
-        addCityById(2193733L);
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        this.cityList.clear();
+        this.cityList.addAll(this.dataBaseHelper.getCityList());
+        updateCityList();
+        this.favoriteAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        this.dataBaseHelper.removeAll();
+        this.dataBaseHelper.insertAll(this.cityList);
     }
 
     private void setEvents() {
@@ -121,27 +139,54 @@ public class FavoriteActivity extends AppCompatActivity {
                     public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull
                             RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
 
+                        Log.d("PIL", "onMove: ");
+
                         int fromPosition = viewHolder.getBindingAdapterPosition();
                         int toPosition = target.getBindingAdapterPosition();
                         Collections.swap(FavoriteActivity.this.cityList, fromPosition, toPosition);
+
+                        FavoriteActivity.this.cityList.get(fromPosition).setFavPosition(fromPosition);
+                        FavoriteActivity.this.cityList.get(toPosition).setFavPosition(toPosition);
+
                         FavoriteActivity.this.favoriteAdapter.notifyItemMoved(fromPosition, toPosition);
+
                         return true;
                     }
 
                     @Override
                     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+
                         FavoriteAdapter.ViewHolder faViewHolder = (FavoriteAdapter.ViewHolder) viewHolder;
+
+                        if(ItemTouchHelper.RIGHT == direction) {
+                            FavoriteActivity.this.favoriteAdapter.notifyDataSetChanged();
+                            return;
+                        }
+
                         City city = faViewHolder.city;
                         int position = faViewHolder.getBindingAdapterPosition();
 
-                        FavoriteActivity.this.cityList.remove(faViewHolder.city);
+                        FavoriteActivity.this.cityList.remove(position);
+
+                        for (int i = position; i < FavoriteActivity.this.cityList.size(); i++) {
+                            City tempCity =  FavoriteActivity.this.cityList.get(i);
+                            tempCity.setFavPosition(tempCity.getFavPosition() - 1);
+                        }
+
                         FavoriteActivity.this.favoriteAdapter.notifyItemRemoved(position);
 
                         Snackbar.make(
                                 findViewById(R.id.coordinatorlayout_favorite_container),
                                 city.getName()+" est supprimée", Snackbar.LENGTH_LONG)
                                 .setAction("Annuler", view -> {
+
                                     FavoriteActivity.this.cityList.add(position, city);
+
+                                    for (int i = position + 1; i < FavoriteActivity.this.cityList.size(); i++) {
+                                        City tempCity =  FavoriteActivity.this.cityList.get(i);
+                                        tempCity.setFavPosition(tempCity.getFavPosition() + 1);
+                                    }
+
                                     FavoriteActivity.this.favoriteAdapter.notifyItemInserted(position);
                                 })
                                 .show();
@@ -149,28 +194,6 @@ public class FavoriteActivity extends AppCompatActivity {
                 });
 
         itemTouchHelper.attachToRecyclerView(recyclerView);
-    }
-
-    private void addCityByCoord(Double lat, Double lon) {
-
-        openWeatherMapAPIClient.weatherByCoord(lat, lon, response -> {
-
-            ObjectMapper mapper = new ObjectMapper();
-            try {
-                WeatherDTO weatherDTO = mapper.readValue(response.toString(), WeatherDTO.class);
-
-                if(weatherDTO != null) {
-                    FavoriteActivity.this.cityList.add(weatherDTO.toCity());
-                    FavoriteActivity.this.favoriteAdapter.notifyDataSetChanged();
-                }
-                else Log.d("PIL", "weatherDTO == null");
-
-            } catch (JsonProcessingException e) {
-                Log.d("PIL", e.getMessage());
-            } finally {
-                Log.d("PIL", FavoriteActivity.this.cityList.toString());
-            }
-        });
     }
 
     private void addCityByName(String cityName) {
@@ -201,7 +224,6 @@ public class FavoriteActivity extends AppCompatActivity {
                         FavoriteActivity.this.cityList.add(city);
                         FavoriteActivity.this.favoriteAdapter.notifyItemInserted(position);
 
-
                     } catch (JsonProcessingException e) {
                         Log.d("PIL", "##### addCityByName #### JsonProcessingException" + e.getMessage());
                     } finally {
@@ -218,25 +240,39 @@ public class FavoriteActivity extends AppCompatActivity {
         );
     }
 
-    private void addCityById(Long id) {
+    private void updateCityList() {
+        Log.d("PIL", "updateCityList: "+this.cityList.size());
 
-        openWeatherMapAPIClient.weatherByCityId(id, response -> {
+        for (int i = 0; i < this.cityList.size(); i++) {
+            updateCity(i, this.cityList.get(i));
+        }
+
+        Log.d("PIL", "LEAVE updateCityList: "+this.cityList.size());
+    }
+
+    private void updateCity(int index, City city) {
+        openWeatherMapAPIClient.weatherByCityId(city.getId(), response -> {
 
             ObjectMapper mapper = new ObjectMapper();
             try {
                 WeatherDTO weatherDTO = mapper.readValue(response.toString(), WeatherDTO.class);
+                City currentCity = weatherDTO != null ? weatherDTO.toCity() : null;
 
-                if(weatherDTO != null) {
-                    FavoriteActivity.this.cityList.add(weatherDTO.toCity());
-                    FavoriteActivity.this.favoriteAdapter.notifyDataSetChanged();
-                }
-                else Log.d("PIL", "weatherDTO == null");
+                if(currentCity == null) return;
+
+                if(city.equals(currentCity)) return;
+
+                currentCity.setIdDb(city.getIdDb());
+                currentCity.setFavPosition(index);
+
+                FavoriteActivity.this.cityList.set(index, currentCity);
+                FavoriteActivity.this.favoriteAdapter.notifyItemChanged(index);
+                FavoriteActivity.this.dataBaseHelper.update(currentCity);
 
             } catch (JsonProcessingException e) {
                 Log.d("PIL", e.getMessage());
             }
         });
     }
-
 
 }

@@ -42,7 +42,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         City city = cityList.get(position);
-
+        city.setFavPosition(holder.getLayoutPosition());
         holder.city = city;
 
         holder.textViewFavoriteCityName.setText(city.getName());
