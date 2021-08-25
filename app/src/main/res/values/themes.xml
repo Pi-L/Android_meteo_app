@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.Meteo" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/titleBg</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
         <item name="colorOnPrimary">@color/colorAccent</item>
         <!-- Secondary brand color. -->
@@ -21,7 +21,9 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.Meteo.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.Meteo.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" >
+<!--        <item name="android:layout_height">20dp</item>-->
+    </style>
 
     <style name="Theme.Meteo.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
@@ -30,7 +32,9 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" >
+        <item name="android:textColorPrimary">@color/titleText</item>
+    </style>
 
     <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

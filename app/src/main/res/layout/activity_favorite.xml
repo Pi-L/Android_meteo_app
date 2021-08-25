@@ -14,7 +14,9 @@
         android:layout_height="@dimen/app_bar_height"
         android:fitsSystemWindows="true"
         android:theme="@style/AppBarOverlay"
-        android:backgroundTint="@color/secondaryBg">
+        android:elevation="3dp"
+
+        >
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/toolbarlayout_favorite"
@@ -22,18 +24,18 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:toolbarId="@+id/toolbar_favorite">
+            app:toolbarId="@+id/toolbar_favorite"
+            >
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar_favorite"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
+                app:layout_collapseMode="parallax"
                 app:title="Favoris"
                 app:popupTheme="@style/PopupOverlay"
-                app:titleTextColor="@color/secondaryText"/>
+                app:titleTextColor="@color/titleText"/>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -61,7 +63,8 @@
         app:layout_anchor="@id/appbar_favorite"
         app:layout_anchorGravity="bottom|end"
         app:srcCompat="@android:drawable/ic_search_category_default"
-        app:tint="@color/white"
-        app:backgroundTint="@color/highLight" />
+        app:tint="@color/primaryText"
+        app:backgroundTint="@color/highLight"
+        />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

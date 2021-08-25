@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -71,6 +72,8 @@ public class FavoriteActivity extends AppCompatActivity {
 
         this.floatingActionButtonSearch = findViewById(R.id.floatingactionbutton_favorite_search);
         this.circularProgressIndicatorLoader = findViewById(R.id.circularprogressindicator_favorite_loader);
+//        Toolbar toolbar = findViewById(R.id.toolbar_favorite);
+//        toolbar.setTitleTextColor(getColor(R.color.titleText));
 
         this.setEvents();
 
