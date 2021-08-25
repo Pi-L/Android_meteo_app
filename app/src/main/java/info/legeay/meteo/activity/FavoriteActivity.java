@@ -28,7 +28,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import info.legeay.meteo.R;
 import info.legeay.meteo.adapter.FavoriteAdapter;
@@ -36,7 +35,6 @@ import info.legeay.meteo.client.OpenWeatherMapAPIClient;
 import info.legeay.meteo.database.DataBaseHelper;
 import info.legeay.meteo.dto.WeatherDTO;
 import info.legeay.meteo.model.City;
-import info.legeay.meteo.util.CityUtil;
 
 public class FavoriteActivity extends AppCompatActivity {
 
@@ -240,14 +238,11 @@ public class FavoriteActivity extends AppCompatActivity {
         );
     }
 
+    // don't wait for hte previous request to be over ... maybe not ideal
     private void updateCityList() {
-        Log.d("PIL", "updateCityList: "+this.cityList.size());
-
         for (int i = 0; i < this.cityList.size(); i++) {
             updateCity(i, this.cityList.get(i));
         }
-
-        Log.d("PIL", "LEAVE updateCityList: "+this.cityList.size());
     }
 
     private void updateCity(int index, City city) {
