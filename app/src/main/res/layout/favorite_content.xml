@@ -5,7 +5,9 @@
     xmlns:tools =  "http://schemas.android.com/tools"
     android:layout_width= "match_parent"
     android:layout_height= "match_parent"
-    android:padding="@dimen/activity_horizontal_margin"
+    android:paddingHorizontal="@dimen/activity_horizontal_margin"
+    android:paddingVertical="20dp"
     app:layout_behavior= "@string/appbar_scrolling_view_behavior"
     tools:context= "info.legeay.meteo.activity.FavoriteActivity"
-    tools:showIn= "@layout/activity_favorite" />
+    tools:showIn= "@layout/activity_favorite"
+    android:background="@color/primaryBg" />

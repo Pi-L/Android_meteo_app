@@ -11,8 +11,9 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 
+import info.legeay.meteo.R;
 import info.legeay.meteo.model.City;
-import lombok.AllArgsConstructor;
+import info.legeay.meteo.util.Image;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,26 +31,36 @@ public class WeatherDTO implements Serializable {
     private Weather[] weather;
     private Main main;
     private Wind wind;
+    private Sys sys;
+    private Integer timezone;
     private Integer cod;
 
     public City toCity() {
 
         if(cod == 404) return null;
 
-        boolean isWeatherArrayNotInitialised = this.weather == null || this.weather.length == 0;
-        String iconTemplate = "https://openweathermap.org/img/wn/%s@2x.png";
+        boolean isWeatherArrayInitialised = this.weather != null && this.weather.length > 0;
+
+//        String iconTemplate = "https://openweathermap.org/img/wn/%s@2x.png";
         DecimalFormat decimalFormat = new DecimalFormat("#.#");
 
         Long currentId = this.id == null ? 1L : this.id;
-        String currentName = StringUtils.isBlank(this.name) ? "Pas de nom" : this.name;
+        String currentCountry = this.sys == null || StringUtils.isBlank(this.sys.country) ? "" : String.format(" (%s)", this.sys.country);
+        String currentName = StringUtils.isBlank(this.name) ? "Pas de nom" : String.format("%s%s", this.name, currentCountry);
         double currentLat = this.coord == null || this.coord.lat == null ? 0D : this.coord.lat;
         double currentLon = this.coord == null || this.coord.lon == null ? 0D : this.coord.lon;
-        String currentTemperature = this.main == null || this.main.temp == null ? "21.2°C" : String.format("%s°C", decimalFormat.format(this.main.temp - 273.15));
-        String currentWeatherIconUrl = isWeatherArrayNotInitialised || StringUtils.isBlank(this.weather[0].icon) ? String.format(iconTemplate,"10d") : String.format(iconTemplate,this.weather[0].icon);
-        String currentWheatherDescription = isWeatherArrayNotInitialised || StringUtils.isBlank(this.weather[0].description) ? "Pas de description" : this.weather[0].description;
+        String currentTemperature = this.main == null || this.main.temp == null ? "21.2°C" : String.format("%s°C", decimalFormat.format(this.main.temp));
+
+        int currentWeatherIconDrawableId = R.drawable.weather_thunder_grey;
 
 
-        return new City(currentId, currentName, currentWheatherDescription, currentTemperature, currentWeatherIconUrl, currentLat, currentLon);
+        if(isWeatherArrayInitialised && weather[0].id != null && sys != null && sys.sunrise != null && sys.sunset != null && timezone != null) {
+            currentWeatherIconDrawableId = Image.getWeatherIcon(weather[0].id, sys.sunrise, sys.sunset, timezone);
+        }
+
+        String currentWheatherDescription = !isWeatherArrayInitialised || StringUtils.isBlank(this.weather[0].description) ? "Pas de description" : this.weather[0].description;
+
+        return new City(currentId, currentName, currentWheatherDescription, currentTemperature, currentWeatherIconDrawableId, currentLat, currentLon);
     }
 
 
@@ -85,7 +96,7 @@ public class WeatherDTO implements Serializable {
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
     @NoArgsConstructor
     public static class Weather implements Serializable {
-        public Long id;
+        public Integer id;
         public String main;
         public String description;
         public String icon;
@@ -137,6 +148,24 @@ public class WeatherDTO implements Serializable {
             return "Wind{" +
                     "speed=" + speed +
                     ", deg=" + deg +
+                    '}';
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+    @NoArgsConstructor
+    public static class Sys implements Serializable {
+        public String country;
+        public Long sunrise;
+        public Long sunset;
+
+        @Override
+        public String toString() {
+            return "Sys{" +
+                    "country='" + country + '\'' +
+                    ", sunrise=" + sunrise +
+                    ", sunset=" + sunset +
                     '}';
         }
     }

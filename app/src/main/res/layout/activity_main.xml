@@ -9,7 +9,8 @@
         android:id="@+id/toolbar_main"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@color/titleBg"
+        app:titleTextColor="@color/titleText"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         android:padding="5dp"
@@ -22,7 +23,7 @@
         android:layout_height="wrap_content"
         android:text="@string/internet_KO"
         android:textSize="30sp"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/alertText"
         android:visibility="gone"
         android:layout_centerInParent="true"
         />
@@ -43,7 +44,7 @@
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:layout_below="@id/toolbar_main"
-        android:background="@color/colorAccent"
+        android:background="@color/primaryBg"
         android:padding="@dimen/activity_vertical_margin"
         >
 
@@ -59,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textColor="@color/white"
+                android:textColor="@color/primaryText"
                 android:textSize="30sp"
                 android:textStyle="bold"/>
 
@@ -69,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/city_desc"
                 android:gravity="center"
-                android:textColor="@color/white"
+                android:textColor="@color/primaryText"
                 android:textSize="17sp"
                 android:textStyle="normal"/>
 
@@ -88,7 +89,6 @@
                 android:id="@+id/imageview_main_city_weather_icon"
                 android:layout_width="60dp"
                 android:layout_height="match_parent"
-                android:src="@drawable/weather_sunny_white"
                 android:layout_gravity="start"
                 />
 
@@ -98,7 +98,7 @@
                 android:layout_height="match_parent"
                 android:gravity="right|center_vertical"
                 android:text="@string/city_temp"
-                android:textColor="@color/white"
+                android:textColor="@color/primaryText"
                 android:textSize="45sp"
                 android:textStyle="normal" />
         </LinearLayout>
@@ -108,16 +108,18 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/linearlayout_meteo_display">
+        android:layout_below="@+id/linearlayout_meteo_display"
+        android:background="@color/secondaryBg"
+        >
 
-        <EditText
-            android:id="@+id/edittext_message"
-            android:layout_width="160dp"
-            android:layout_height="40dp"
-            android:layout_centerInParent="true"
-            android:hint="Votre message"
-            android:textSize="15sp"
-            />
+<!--        <EditText-->
+<!--            android:id="@+id/edittext_message"-->
+<!--            android:layout_width="160dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_centerInParent="true"-->
+<!--            android:hint="Votre message"-->
+<!--            android:textSize="15sp"-->
+<!--            />-->
     </RelativeLayout>
 
 
@@ -131,7 +133,7 @@
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         app:tint="@color/white"
-        app:backgroundTint="@color/colorAccent"
+        app:backgroundTint="@color/highLight"
         app:srcCompat="@drawable/ic_heart_24" />
 
 </RelativeLayout>

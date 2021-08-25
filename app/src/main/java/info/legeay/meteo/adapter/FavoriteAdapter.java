@@ -1,6 +1,7 @@
 package info.legeay.meteo.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
@@ -45,13 +47,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
 
         holder.textViewFavoriteCityName.setText(city.getName());
         holder.textViewFavoriteCityWeather.setText(city.getWeatherDescription());
-
-        Picasso.get()
-                .load(city.getWeatherIconUrl())
-                .placeholder(R.drawable.weather_rainy_grey)
-                .into(holder.imageViewFavoriteCityWeather);
-
-//        holder.imageViewFavoriteCityWeather.setImageDrawable(context.getDrawable(city.getWeatherIcon()));
+        holder.imageViewFavoriteCityWeather.setImageResource(city.getWeatherIconDrawableId());
         holder.textViewFavoriteCityTemperature.setText(city.getCurrentTemperature());
     }
 
@@ -59,7 +55,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
     public int getItemCount() {return this.cityList == null ? 0 : this.cityList.size();}
 
     // Classe holder qui contient la vue d’un item
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public City city;
 
@@ -71,31 +67,33 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
         public ViewHolder(View view) {
             super(view);
 
-            textViewFavoriteCityName = view.findViewById(R.id.textview_favorite_city_name);
-            textViewFavoriteCityWeather = view.findViewById(R.id.textview_favorite_city_weather);
-            imageViewFavoriteCityWeather = view.findViewById(R.id.imageview_favorite_city_weather);
-            textViewFavoriteCityTemperature = view.findViewById(R.id.textview_favorite_city_temperature);
+            view.setTag(this);
 
-            view.setOnLongClickListener(this);
+            textViewFavoriteCityName = (TextView) view.findViewById(R.id.textview_favorite_city_name);
+            textViewFavoriteCityWeather = (TextView) view.findViewById(R.id.textview_favorite_city_weather);
+            imageViewFavoriteCityWeather = (ImageView) view.findViewById(R.id.imageview_favorite_city_weather);
+            textViewFavoriteCityTemperature = (TextView) view.findViewById(R.id.textview_favorite_city_temperature);
+
+//            view.setOnLongClickListener(this);
 
         }
 
 
-        @Override
-        public boolean onLongClick(View v) {
-
-            final AlertDialog alertDialog = new AlertDialog.Builder(FavoriteAdapter.this.context)
-                    .setTitle("Supprimer cette ville?")
-                    .setPositiveButton("SUPPRIMER", (dialog, which) -> {
-                        FavoriteAdapter.this.cityList.remove(this.city);
-                        FavoriteAdapter.this.notifyDataSetChanged();
-                    })
-                    .setNegativeButton("Annuler", (dialog, which) -> dialog.cancel())
-                    .create();
-
-            alertDialog.show();
-
-            return true;
-        }
+//        @Override
+//        public boolean onLongClick(View v) {
+//
+//            final AlertDialog alertDialog = new AlertDialog.Builder(FavoriteAdapter.this.context)
+//                    .setTitle("Supprimer cette ville?")
+//                    .setPositiveButton("SUPPRIMER", (dialog, which) -> {
+//                        FavoriteAdapter.this.cityList.remove(this.city);
+//                        FavoriteAdapter.this.notifyDataSetChanged();
+//                    })
+//                    .setNegativeButton("Annuler", (dialog, which) -> dialog.cancel())
+//                    .create();
+//
+//            alertDialog.show();
+//
+//            return true;
+//        }
     }
 }

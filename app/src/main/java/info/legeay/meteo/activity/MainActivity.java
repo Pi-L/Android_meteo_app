@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private CircularProgressIndicator circularProgressIndicatorLoader;
 
     private LinearLayout linearlayoutMeteoDisplay;
-    private EditText editTextMessage;
+//    private EditText editTextMessage;
 
     private FloatingActionButton buttonFavorite;
 
@@ -66,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar_main);
-        myToolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(myToolbar);
+
 
         this.handler = new Handler();
         this.openWeatherMapAPIClient = new OpenWeatherMapAPIClient(this);
@@ -82,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
         this.linearlayoutMeteoDisplay = findViewById(R.id.linearlayout_meteo_display);
         this.buttonFavorite = findViewById(R.id.button_favorite);
-        this.editTextMessage = findViewById(R.id.edittext_message);
+//        this.editTextMessage = findViewById(R.id.edittext_message);
 
         this.setEvents();
 
@@ -147,10 +148,11 @@ public class MainActivity extends AppCompatActivity {
                         MainActivity.this.textViewCityName.setText(city.getName());
                         MainActivity.this.textViewCityWeatherDescription.setText(city.getWeatherDescription());
                         MainActivity.this.textViewCityTemperature.setText(city.getCurrentTemperature());
-                        Picasso.get()
-                                .load(city.getWeatherIconUrl())
-                                .placeholder(R.drawable.weather_rainy_grey)
-                                .into(MainActivity.this.imageViewCityWeatherIcon);
+                        MainActivity.this.imageViewCityWeatherIcon.setImageResource(city.getWeatherIconDrawableId());
+//                        Picasso.get()
+//                                .load(city.getWeatherIconUrl())
+//                                .placeholder(R.drawable.weather_rainy_grey)
+//                                .into(MainActivity.this.imageViewCityWeatherIcon);
                     });
                 }
                 else Log.d("PIL", "weatherDTO == null");
@@ -182,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
     private void setEvents() {
         this.buttonFavorite.setOnClickListener(view -> {
             Intent intent = new Intent(this, FavoriteActivity.class);
-            intent.putExtra(String.format("%smessage", KEY_PREFIX), this.editTextMessage.getText().toString());
+//            intent.putExtra(String.format("%smessage", KEY_PREFIX), this.editTextMessage.getText().toString());
             startActivity(intent);
         });
 

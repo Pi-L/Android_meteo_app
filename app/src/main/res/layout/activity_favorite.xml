@@ -2,6 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorlayout_favorite_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -12,7 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/app_bar_height"
         android:fitsSystemWindows="true"
-        android:theme="@style/AppBarOverlay">
+        android:theme="@style/AppBarOverlay"
+        android:backgroundTint="@color/secondaryBg">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/toolbarlayout_favorite"
@@ -30,7 +32,8 @@
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 app:title="Favoris"
-                app:popupTheme="@style/PopupOverlay" />
+                app:popupTheme="@style/PopupOverlay"
+                app:titleTextColor="@color/secondaryText"/>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -59,6 +62,6 @@
         app:layout_anchorGravity="bottom|end"
         app:srcCompat="@android:drawable/ic_search_category_default"
         app:tint="@color/white"
-        app:backgroundTint="@color/colorAccent" />
+        app:backgroundTint="@color/highLight" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

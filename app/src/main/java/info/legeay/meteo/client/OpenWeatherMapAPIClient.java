@@ -11,6 +11,8 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
+import java.util.Locale;
+
 import info.legeay.meteo.R;
 
 
@@ -27,7 +29,8 @@ public class OpenWeatherMapAPIClient {
         this.context = context;
         requestQueue = Volley.newRequestQueue(this.context);
 
-        this.weatherUrlTemplate = BASE_WEATHER_URL + "%s&appid=" + context.getString(R.string.owm_api_key);
+        String languageCode = Locale.getDefault().getLanguage();
+        this.weatherUrlTemplate = BASE_WEATHER_URL + "%s&units=metric&lang="+languageCode+"&appid=" + context.getString(R.string.owm_api_key);
     }
 
     private void weather(String urlParams, Response.Listener<JSONObject> response, Response.ErrorListener errorListener) {

@@ -21,11 +21,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import info.legeay.meteo.R;
 import info.legeay.meteo.adapter.FavoriteAdapter;
@@ -46,7 +49,7 @@ public class FavoriteActivity extends AppCompatActivity {
 
     private OpenWeatherMapAPIClient openWeatherMapAPIClient;
 
-    private List<City> cityList = new ArrayList<>();
+    private final List<City> cityList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +72,11 @@ public class FavoriteActivity extends AppCompatActivity {
         this.setEvents();
 
         this.attachItemTouchHelperToRecyclerView();
+
+        addCityById(4717560L);
+        addCityById(2972191L);
+        addCityById(5128581L);
+        addCityById(2193733L);
     }
 
     private void setEvents() {
@@ -105,6 +113,44 @@ public class FavoriteActivity extends AppCompatActivity {
         });
     }
 
+    private void attachItemTouchHelperToRecyclerView() {
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
+                new ItemTouchHelper.SimpleCallback(ItemTouchHelper.DOWN|ItemTouchHelper.UP,ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
+                    @Override
+                    public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull
+                            RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+
+                        int fromPosition = viewHolder.getBindingAdapterPosition();
+                        int toPosition = target.getBindingAdapterPosition();
+                        Collections.swap(FavoriteActivity.this.cityList, fromPosition, toPosition);
+                        FavoriteActivity.this.favoriteAdapter.notifyItemMoved(fromPosition, toPosition);
+                        return true;
+                    }
+
+                    @Override
+                    public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                        FavoriteAdapter.ViewHolder faViewHolder = (FavoriteAdapter.ViewHolder) viewHolder;
+                        City city = faViewHolder.city;
+                        int position = faViewHolder.getBindingAdapterPosition();
+
+                        FavoriteActivity.this.cityList.remove(faViewHolder.city);
+                        FavoriteActivity.this.favoriteAdapter.notifyItemRemoved(position);
+
+                        Snackbar.make(
+                                findViewById(R.id.coordinatorlayout_favorite_container),
+                                city.getName()+" est supprimée", Snackbar.LENGTH_LONG)
+                                .setAction("Annuler", view -> {
+                                    FavoriteActivity.this.cityList.add(position, city);
+                                    FavoriteActivity.this.favoriteAdapter.notifyItemInserted(position);
+                                })
+                                .show();
+                    }
+                });
+
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+    }
+
     private void addCityByCoord(Double lat, Double lon) {
 
         openWeatherMapAPIClient.weatherByCoord(lat, lon, response -> {
@@ -138,15 +184,23 @@ public class FavoriteActivity extends AppCompatActivity {
                         WeatherDTO weatherDTO = mapper.readValue(response.toString(), WeatherDTO.class);
                         City city = weatherDTO != null ? weatherDTO.toCity() : null;
 
-                        if(city != null) {
-                            Log.d("PIL", "weatherDTO != null");
-                            FavoriteActivity.this.cityList.add(city);
-                            FavoriteActivity.this.favoriteAdapter.notifyDataSetChanged();
-                        } else {
+                        if(city == null) {
                             Log.d("PIL", "weatherDTO == null");
                             FavoriteActivity.this.handler.post(() ->
-                                Toast.makeText(FavoriteActivity.this, String.format("Ville %s non trouvée", cityName), Toast.LENGTH_LONG).show());
+                                    Toast.makeText(FavoriteActivity.this, String.format("Ville %s non trouvée", cityName), Toast.LENGTH_LONG).show());
+                            return;
                         }
+
+                        if(this.cityList.stream().anyMatch(currentCity -> currentCity.getId().equals(city.getId()))) {
+                            FavoriteActivity.this.handler.post(() ->
+                                    Toast.makeText(FavoriteActivity.this, String.format("Ville %s deja presente", cityName), Toast.LENGTH_LONG).show());
+                            return;
+                        }
+
+                        int position = FavoriteActivity.this.cityList.size();
+                        FavoriteActivity.this.cityList.add(city);
+                        FavoriteActivity.this.favoriteAdapter.notifyItemInserted(position);
+
 
                     } catch (JsonProcessingException e) {
                         Log.d("PIL", "##### addCityByName #### JsonProcessingException" + e.getMessage());
@@ -162,26 +216,6 @@ public class FavoriteActivity extends AppCompatActivity {
 
                 }
         );
-    }
-
-    private void attachItemTouchHelperToRecyclerView() {
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
-                new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
-                      @Override
-                      public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull
-                                            RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                          return false;
-                      }
-                      @Override
-                      public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                          FavoriteAdapter.ViewHolder faViewHolder = (FavoriteAdapter.ViewHolder) viewHolder;
-                          FavoriteActivity.this.cityList.remove(faViewHolder.city);
-                          FavoriteActivity.this.favoriteAdapter.notifyDataSetChanged();
-                          Log.d("PIL", "onSwiped: ");
-                      }
-                  });
-
-        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     private void addCityById(Long id) {
@@ -200,10 +234,9 @@ public class FavoriteActivity extends AppCompatActivity {
 
             } catch (JsonProcessingException e) {
                 Log.d("PIL", e.getMessage());
-            } finally {
-                Log.d("PIL", FavoriteActivity.this.cityList.toString());
             }
         });
     }
+
 
 }

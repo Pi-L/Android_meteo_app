@@ -13,4 +13,15 @@
     <color name="colorAccent">#FFAB40</color>
     <color name="error">#FF1122</color>
     <color name="bgError">#66FF0000</color>
+    <color name="brownLight">#6B4423</color>
+
+    <color name="primaryBg">#12232E</color>
+    <color name="secondaryBg">#007CC7</color>
+    <color name="primaryText">#EEFBFB</color>
+    <color name="secondaryText">#EEFBFB</color>
+<!--    <color name="highLight">#203647</color>-->
+    <color name="highLight">#692705</color>
+    <color name="titleBg">#03A9F4</color>
+    <color name="titleText">#EEFBFB</color>
+    <color name="alertText">#FF2211</color>
 </resources>

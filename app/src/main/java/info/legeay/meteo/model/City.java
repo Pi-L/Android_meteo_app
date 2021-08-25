@@ -15,7 +15,7 @@ public class City {
     private String name;
     private String weatherDescription;
     private String currentTemperature;
-    private String weatherIconUrl;
+    private Integer weatherIconDrawableId;
 
     private final double lat;
     private final double lon;
@@ -27,7 +27,7 @@ public class City {
                 ", name='" + name + '\'' +
                 ", weatherDescription='" + weatherDescription + '\'' +
                 ", currentTemperature='" + currentTemperature + '\'' +
-                ", weatherIconUrl='" + weatherIconUrl + '\'' +
+                ", weatherIconDrawableId='" + weatherIconDrawableId + '\'' +
                 ", lat=" + lat +
                 ", lon=" + lon +
                 '}';
