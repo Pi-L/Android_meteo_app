@@ -15,6 +15,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import info.legeay.meteo.R;
 import info.legeay.meteo.client.OpenWeatherMapAPIClient;
+import info.legeay.meteo.dao.CityDAO;
+import info.legeay.meteo.database.MeteoDatabase;
 import info.legeay.meteo.databinding.ActivityMainBinding;
 import info.legeay.meteo.dto.WeatherDTO;
 import info.legeay.meteo.model.City;
@@ -61,6 +63,9 @@ public class MainActivity extends AppCompatActivity {
 
     private OpenWeatherMapAPIClient openWeatherMapAPIClient;
 
+    private MeteoDatabase meteoDatabase;
+    private CityDAO cityDAO;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,17 +94,24 @@ public class MainActivity extends AppCompatActivity {
 
         setPageVisibility();
 
-        setActivityData();
 
+        this.meteoDatabase = MeteoDatabase.getDatabase(this);
+        this.cityDAO = meteoDatabase.cityDAO();
 
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
+    protected void onStart() {
+        super.onStart();
 
         setPageVisibility();
+
+        this.cityDAO.getFirstFavorite().subscribeOn(MeteoDatabase.dbScheduler)
+                .doOnError(e -> Log.d("PIL", "main onCreate: "+e.getMessage()))
+                .doOnSuccess(this::setActivityData)
+                .subscribe();
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -130,11 +142,14 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-    private void setActivityData() {
+    private void setActivityData(City favCity) {
         if(!Network.isInternetAvailable(this)) return;
-        this.circularProgressIndicatorLoader.setVisibility(View.VISIBLE);
 
-        openWeatherMapAPIClient.weatherByCityId(2972191L, response -> {
+        MainActivity.this.handler.post(() -> {
+            this.circularProgressIndicatorLoader.setVisibility(View.VISIBLE);
+        });
+
+        openWeatherMapAPIClient.weatherByCityId(favCity.getId(), response -> {
 
             ObjectMapper mapper = new ObjectMapper();
             try {
@@ -160,7 +175,9 @@ public class MainActivity extends AppCompatActivity {
             } catch (JsonProcessingException e) {
                 Log.d("PIL", e.getMessage());
             } finally {
-                MainActivity.this.circularProgressIndicatorLoader.setVisibility(View.GONE);
+                MainActivity.this.handler.post(() -> {
+                    MainActivity.this.circularProgressIndicatorLoader.setVisibility(View.GONE);
+                });
             }
         });
 

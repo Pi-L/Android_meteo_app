@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -33,15 +32,21 @@ import java.util.List;
 import info.legeay.meteo.R;
 import info.legeay.meteo.adapter.FavoriteAdapter;
 import info.legeay.meteo.client.OpenWeatherMapAPIClient;
+import info.legeay.meteo.dao.CityDAO;
 import info.legeay.meteo.database.DataBaseHelper;
+import info.legeay.meteo.database.MeteoDatabase;
 import info.legeay.meteo.dto.WeatherDTO;
 import info.legeay.meteo.model.City;
+import io.reactivex.rxjava3.core.Single;
 
 public class FavoriteActivity extends AppCompatActivity {
 
     public static final String KEY_PREFIX = "fav_";
 
     private DataBaseHelper dataBaseHelper;
+
+    private MeteoDatabase meteoDatabase;
+    private CityDAO cityDAO;
 
     private RecyclerView recyclerView;
     private FavoriteAdapter favoriteAdapter;
@@ -60,7 +65,7 @@ public class FavoriteActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_favorite);
 //        this.deleteDatabase(DataBaseHelper.DATABASE_NAME);
-        this.dataBaseHelper = new DataBaseHelper(this);
+        //this.dataBaseHelper = new DataBaseHelper(this);
         this.handler = new Handler();
         openWeatherMapAPIClient = new OpenWeatherMapAPIClient(this);
 
@@ -72,30 +77,46 @@ public class FavoriteActivity extends AppCompatActivity {
 
         this.floatingActionButtonSearch = findViewById(R.id.floatingactionbutton_favorite_search);
         this.circularProgressIndicatorLoader = findViewById(R.id.circularprogressindicator_favorite_loader);
-//        Toolbar toolbar = findViewById(R.id.toolbar_favorite);
-//        toolbar.setTitleTextColor(getColor(R.color.titleText));
 
         this.setEvents();
 
         this.attachItemTouchHelperToRecyclerView();
+
+        this.meteoDatabase = MeteoDatabase.getDatabase(this);
+        this.cityDAO = meteoDatabase.cityDAO();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        this.cityList.clear();
-        this.cityList.addAll(this.dataBaseHelper.getCityList());
-        updateCityList();
-        this.favoriteAdapter.notifyDataSetChanged();
+        // de la meme maniere qu'on fait une classe Client pour une API, il faudrait faire une classe Repository ici pour plus de proprete
+        Single<List<City>> cityListSingle = this.cityDAO.getAllSortedByFavPositionAsc();
+
+        cityListSingle.subscribeOn(MeteoDatabase.dbScheduler)
+                .subscribe(currentCityList -> {
+                    this.cityList.clear();
+                    this.cityList.addAll(currentCityList);
+                    updateCityList();
+                });
+
+
+//        this.cityList.clear();
+//        this.cityList.addAll(this.dataBaseHelper.getCityList());
+//        updateCityList();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        this.dataBaseHelper.removeAll();
-        this.dataBaseHelper.insertAll(this.cityList);
+        this.cityDAO.deleteAll().subscribeOn(MeteoDatabase.dbScheduler)
+                .subscribe(() ->
+                    this.cityDAO.insertAll(this.cityList).subscribeOn(MeteoDatabase.dbScheduler)
+                            .subscribe()
+                );
+//        this.dataBaseHelper.removeAll();
+//        this.dataBaseHelper.insertAll(this.cityList);
     }
 
     private void setEvents() {
@@ -222,8 +243,11 @@ public class FavoriteActivity extends AppCompatActivity {
                         }
 
                         int position = FavoriteActivity.this.cityList.size();
+                        city.setFavPosition(position);
                         FavoriteActivity.this.cityList.add(city);
                         FavoriteActivity.this.favoriteAdapter.notifyItemInserted(position);
+
+//                        FavoriteActivity.this.cityDAO.insert(city).subscribeOn(MeteoDatabase.dbScheduler).subscribe();
 
                     } catch (JsonProcessingException e) {
                         Log.d("PIL", "##### addCityByName #### JsonProcessingException" + e.getMessage());
@@ -265,7 +289,7 @@ public class FavoriteActivity extends AppCompatActivity {
 
                 FavoriteActivity.this.cityList.set(index, currentCity);
                 FavoriteActivity.this.favoriteAdapter.notifyItemChanged(index);
-                FavoriteActivity.this.dataBaseHelper.update(currentCity);
+//                FavoriteActivity.this.dataBaseHelper.update(currentCity);
 
             } catch (JsonProcessingException e) {
                 Log.d("PIL", e.getMessage());
