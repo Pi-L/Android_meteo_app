@@ -29,7 +29,7 @@ public abstract class MeteoDatabase extends RoomDatabase {
     private static final String DB_NAME = "meteo_database";
     private static volatile MeteoDatabase INSTANCE;
 
-    private static final int NUMBER_OF_THREADS = 4;
+    private static final int NUMBER_OF_THREADS = 10;
     private static final ExecutorService dbExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
     public static final Scheduler dbScheduler = Schedulers.from(dbExecutor);

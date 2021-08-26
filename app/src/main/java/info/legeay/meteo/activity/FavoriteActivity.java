@@ -43,7 +43,7 @@ public class FavoriteActivity extends AppCompatActivity {
 
     public static final String KEY_PREFIX = "fav_";
 
-    private DataBaseHelper dataBaseHelper;
+//    private DataBaseHelper dataBaseHelper;
 
     private MeteoDatabase meteoDatabase;
     private CityDAO cityDAO;
@@ -99,11 +99,6 @@ public class FavoriteActivity extends AppCompatActivity {
                     this.cityList.addAll(currentCityList);
                     updateCityList();
                 });
-
-
-//        this.cityList.clear();
-//        this.cityList.addAll(this.dataBaseHelper.getCityList());
-//        updateCityList();
     }
 
     @Override
@@ -111,12 +106,11 @@ public class FavoriteActivity extends AppCompatActivity {
         super.onPause();
 
         this.cityDAO.deleteAll().subscribeOn(MeteoDatabase.dbScheduler)
-                .subscribe(() ->
-                    this.cityDAO.insertAll(this.cityList).subscribeOn(MeteoDatabase.dbScheduler)
-                            .subscribe()
+                .subscribe(() -> {
+                            this.cityDAO.insertAll(this.cityList).subscribeOn(MeteoDatabase.dbScheduler)
+                                    .subscribe();
+                        }
                 );
-//        this.dataBaseHelper.removeAll();
-//        this.dataBaseHelper.insertAll(this.cityList);
     }
 
     private void setEvents() {
@@ -161,7 +155,7 @@ public class FavoriteActivity extends AppCompatActivity {
                     public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull
                             RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
 
-                        Log.d("PIL", "onMove: ");
+                        Log.d("PILMETEOAPP", "onMove: ");
 
                         int fromPosition = viewHolder.getBindingAdapterPosition();
                         int toPosition = target.getBindingAdapterPosition();
@@ -181,7 +175,7 @@ public class FavoriteActivity extends AppCompatActivity {
                         FavoriteAdapter.ViewHolder faViewHolder = (FavoriteAdapter.ViewHolder) viewHolder;
 
                         if(ItemTouchHelper.RIGHT == direction) {
-                            FavoriteActivity.this.favoriteAdapter.notifyDataSetChanged();
+                            FavoriteActivity.this.favoriteAdapter.notifyItemChanged(faViewHolder.getBindingAdapterPosition());
                             return;
                         }
 
@@ -230,7 +224,7 @@ public class FavoriteActivity extends AppCompatActivity {
                         City city = weatherDTO != null ? weatherDTO.toCity() : null;
 
                         if(city == null) {
-                            Log.d("PIL", "weatherDTO == null");
+                            Log.d("PILMETEOAPP", "city == null");
                             FavoriteActivity.this.handler.post(() ->
                                     Toast.makeText(FavoriteActivity.this, String.format("Ville %s non trouvée", cityName), Toast.LENGTH_LONG).show());
                             return;
@@ -250,13 +244,13 @@ public class FavoriteActivity extends AppCompatActivity {
 //                        FavoriteActivity.this.cityDAO.insert(city).subscribeOn(MeteoDatabase.dbScheduler).subscribe();
 
                     } catch (JsonProcessingException e) {
-                        Log.d("PIL", "##### addCityByName #### JsonProcessingException" + e.getMessage());
+                        Log.d("PILMETEOAPP", "##### addCityByName #### JsonProcessingException" + e.getMessage());
                     } finally {
                         this.circularProgressIndicatorLoader.setVisibility(View.GONE);
                     }
                 },
                 error -> {
-                    Log.d("PIL", String.format("FavoriteActivity - addCityByName error: %s", error.getMessage()));
+                    Log.d("PILMETEOAPP", String.format("FavoriteActivity - addCityByName error: %s", error.getMessage()));
                     this.circularProgressIndicatorLoader.setVisibility(View.GONE);
                     FavoriteActivity.this.handler.post(() ->
                             Toast.makeText(FavoriteActivity.this, String.format("Ville %s non trouvée", cityName), Toast.LENGTH_LONG).show());
@@ -289,10 +283,9 @@ public class FavoriteActivity extends AppCompatActivity {
 
                 FavoriteActivity.this.cityList.set(index, currentCity);
                 FavoriteActivity.this.favoriteAdapter.notifyItemChanged(index);
-//                FavoriteActivity.this.dataBaseHelper.update(currentCity);
 
             } catch (JsonProcessingException e) {
-                Log.d("PIL", e.getMessage());
+                Log.d("PILMETEOAPP", e.getMessage());
             }
         });
     }

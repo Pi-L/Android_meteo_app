@@ -47,7 +47,7 @@ public class OpenWeatherMapAPIClient {
     }
 
     public void weatherByCoord(double lat, double lon, Response.Listener<JSONObject> response) {
-        weatherByCoord(lat, lon, response, error -> { Log.d("PIL", error.getMessage()); });
+        weatherByCoord(lat, lon, response, error -> { Log.d("PILMETEOAPP", error.getMessage()); });
     }
 
     public void weatherByCoord(double lat, double lon, Response.Listener<JSONObject> response, Response.ErrorListener errorListener) {
@@ -56,7 +56,7 @@ public class OpenWeatherMapAPIClient {
     }
 
     public void weatherByCityName(String cityName, Response.Listener<JSONObject> response) {
-        weatherByCityName(cityName, response, error -> { Log.d("PIL", "##### weatherByCityName #### JsonProcessingException" + error.getMessage()); });
+        weatherByCityName(cityName, response, error -> { Log.d("PILMETEOAPP", "##### weatherByCityName #### JsonProcessingException" + error.getMessage()); });
     }
 
     public void weatherByCityName(String cityName, Response.Listener<JSONObject> response, Response.ErrorListener errorListener) {
@@ -65,7 +65,7 @@ public class OpenWeatherMapAPIClient {
     }
 
     public void weatherByCityId(Long cityId, Response.Listener<JSONObject> response) {
-        weatherByCityId(cityId, response, error -> { Log.d("PIL", error.getMessage()); });
+        weatherByCityId(cityId, response, error -> { Log.d("PILMETEOAPP", error.getMessage()); });
     }
 
     public void weatherByCityId(Long cityId, Response.Listener<JSONObject> response, Response.ErrorListener errorListener) {
