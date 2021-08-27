@@ -67,4 +67,20 @@
         app:backgroundTint="@color/highLight"
         />
 
+    <TextView
+        android:id="@+id/textview_internet_ko"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/internet_KO"
+        android:textSize="15sp"
+        android:textColor="@color/alertText"
+        android:textStyle="bold"
+        android:visibility="gone"
+        android:background="@color/titleBg"
+        android:paddingVertical="5dp"
+        android:paddingHorizontal="10dp"
+        android:layout_gravity="bottom|left"
+
+        />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

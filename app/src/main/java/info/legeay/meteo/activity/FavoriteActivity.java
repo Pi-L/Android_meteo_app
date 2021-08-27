@@ -39,6 +39,7 @@ import info.legeay.meteo.database.DataBaseHelper;
 import info.legeay.meteo.database.MeteoDatabase;
 import info.legeay.meteo.dto.WeatherDTO;
 import info.legeay.meteo.model.City;
+import info.legeay.meteo.util.Network;
 import io.reactivex.rxjava3.core.Single;
 
 public class FavoriteActivity extends AppCompatActivity {
@@ -89,27 +90,36 @@ public class FavoriteActivity extends AppCompatActivity {
         this.floatingActionButtonSearch = findViewById(R.id.floatingactionbutton_favorite_search);
         this.circularProgressIndicatorLoader = findViewById(R.id.circularprogressindicator_favorite_loader);
 
-        this.setEvents();
-
-        this.attachItemTouchHelperToRecyclerView();
 
         this.meteoDatabase = MeteoDatabase.getDatabase(this);
         this.cityDAO = meteoDatabase.cityDAO();
+
+        this.setEvents();
+        this.attachItemTouchHelperToRecyclerView();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
+        if(Network.isInternetAvailable(this)) floatingActionButtonSearch.setVisibility(View.VISIBLE);
+        else floatingActionButtonSearch.setVisibility(View.GONE);
+
         // de la meme maniere qu'on fait une classe Client pour une API, il faudrait faire une classe Repository ici pour plus de proprete
         Single<List<City>> cityListSingle = this.cityDAO.getAllSortedByFavPositionAsc();
 
         cityListSingle.subscribeOn(MeteoDatabase.dbScheduler)
-                .subscribe(currentCityList -> {
-                    this.cityList.clear();
-                    this.cityList.addAll(currentCityList);
-                    updateCityList();
-                });
+                .subscribe(
+                        currentCityList -> {
+                        this.cityList.clear();
+                        if(currentCityList.isEmpty()) return;
+
+                        this.cityList.addAll(currentCityList);
+                        // not thread safe
+                        updateCityList();
+                    },
+                        error -> Log.d("PILMETEOAPP", String.format("onResume: cityListSingle.subscribeOn error :%s", error.getMessage()))
+                );
     }
 
     @Override
@@ -118,8 +128,9 @@ public class FavoriteActivity extends AppCompatActivity {
 
         this.cityDAO.deleteAll().subscribeOn(MeteoDatabase.dbScheduler)
                 .subscribe(() -> {
-                            this.cityDAO.insertAll(this.cityList).subscribeOn(MeteoDatabase.dbScheduler)
-                                    .subscribe();
+                            if(FavoriteActivity.this.cityList.isEmpty()) return;
+                            FavoriteActivity.this.cityDAO.insertAll(this.cityList).subscribeOn(MeteoDatabase.dbScheduler)
+                                            .subscribe();
                         }
                 );
     }
@@ -194,6 +205,8 @@ public class FavoriteActivity extends AppCompatActivity {
                         int position = faViewHolder.getBindingAdapterPosition();
 
                         FavoriteActivity.this.cityList.remove(position);
+
+                        Log.d("PILMETEOAPP", "onSwiped : "+position+" - "+FavoriteActivity.this.cityList.size());
 
                         for (int i = position; i < FavoriteActivity.this.cityList.size(); i++) {
                             City tempCity =  FavoriteActivity.this.cityList.get(i);
@@ -278,7 +291,13 @@ public class FavoriteActivity extends AppCompatActivity {
     }
 
     private void updateCity(int index, City city) {
+        // not thread safe ...
         openWeatherMapAPIClient.weatherByCityId(city.getId(), response -> {
+            Log.d("PILMETEOAPP", "updateCity response for index : "+index+" - list size: "+FavoriteActivity.this.cityList.size()+" - bad thread managment: "+(index > this.cityList.size() - 1));
+
+            // bad fix for async response conflict
+            // todo: better
+            if(index > this.cityList.size() - 1) return;
 
             ObjectMapper mapper = new ObjectMapper();
             try {

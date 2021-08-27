@@ -17,27 +17,6 @@
         android:layout_alignParentTop="true"
         />
 
-    <TextView
-        android:id="@+id/textview_internet_ko"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/internet_KO"
-        android:textSize="30sp"
-        android:textColor="@color/alertText"
-        android:visibility="gone"
-        android:layout_centerInParent="true"
-        />
-
-    <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/circularprogressindicator_main_loader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:visibility="gone"
-        android:layout_centerInParent="true"
-        app:trackThickness="5dp"
-        app:indicatorSize="100dp"/>
-
     <LinearLayout
         android:id="@+id/linearlayout_meteo_display"
         android:layout_height="230dp"
@@ -68,7 +47,6 @@
                 android:id="@+id/textview_main_city_weather_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/city_desc"
                 android:gravity="center"
                 android:textColor="@color/primaryText"
                 android:textSize="17sp"
@@ -97,7 +75,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="right|center_vertical"
-                android:text="@string/city_temp"
                 android:textColor="@color/primaryText"
                 android:textSize="45sp"
                 android:textStyle="normal" />
@@ -111,18 +88,33 @@
         android:layout_below="@+id/linearlayout_meteo_display"
         android:background="@color/secondaryBg"
         >
-
-<!--        <EditText-->
-<!--            android:id="@+id/edittext_message"-->
-<!--            android:layout_width="160dp"-->
-<!--            android:layout_height="40dp"-->
-<!--            android:layout_centerInParent="true"-->
-<!--            android:hint="Votre message"-->
-<!--            android:textSize="15sp"-->
-<!--            />-->
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/textview_internet_ko"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/internet_KO"
+        android:textSize="15sp"
+        android:textColor="@color/alertText"
+        android:textStyle="bold"
+        android:visibility="gone"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:background="@color/titleBg"
+        android:paddingVertical="5dp"
+        android:paddingHorizontal="10dp"
+        />
 
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/circularprogressindicator_main_loader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        app:trackThickness="5dp"
+        app:indicatorSize="100dp"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_favorite"

@@ -3,8 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="info.legeay.meteo.activity.MainActivity">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+    android:id="@+id/action_location"
+    android:title="Location"
+    android:icon="@drawable/ic_baseline_room_24"
+    app:showAsAction="ifRoom" />
+
 </menu>

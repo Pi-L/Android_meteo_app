@@ -23,6 +23,7 @@ import java.util.List;
 
 import info.legeay.meteo.R;
 import info.legeay.meteo.activity.FavoriteActivity;
+import info.legeay.meteo.activity.MainActivity;
 import info.legeay.meteo.activity.MapsActivity;
 import info.legeay.meteo.dto.GoogleMapActivityDTO;
 import info.legeay.meteo.dto.WeatherDTO;
@@ -87,6 +88,9 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
 
         @Override
         public void onClick(View v) {
+
+            if(!Network.isInternetAvailable(FavoriteAdapter.this.context)) return;
+
             ObjectMapper mapper = new ObjectMapper();
             Intent intent = new Intent(FavoriteAdapter.this.context, MapsActivity.class);
 
