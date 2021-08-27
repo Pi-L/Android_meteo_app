@@ -14,6 +14,8 @@ import java.util.Arrays;
 import info.legeay.meteo.R;
 import info.legeay.meteo.model.City;
 import info.legeay.meteo.util.Image;
+import info.legeay.meteo.util.Time;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -58,9 +60,12 @@ public class WeatherDTO implements Serializable {
             currentWeatherIconDrawableId = Image.getWeatherIcon(weather[0].id, sys.sunrise, sys.sunset, timezone);
         }
 
-        String currentWheatherDescription = !isWeatherArrayInitialised || StringUtils.isBlank(this.weather[0].description) ? "Pas de description" : this.weather[0].description;
 
-        return new City(currentId, currentName, currentWheatherDescription, currentTemperature, currentWeatherIconDrawableId, currentLat, currentLon);
+
+        String currentWheatherDescription = !isWeatherArrayInitialised || StringUtils.isBlank(this.weather[0].description) ? "Pas de description" : this.weather[0].description;
+        if(timezone != null) currentWheatherDescription = String.format("%s (%s)", currentWheatherDescription, Time.getTimeFormated(timezone));
+
+        return new City(currentId, currentName, currentWheatherDescription, currentTemperature, currentWeatherIconDrawableId, currentLat, currentLon, sys.sunrise, sys.sunset, timezone);
     }
 
 
@@ -79,6 +84,7 @@ public class WeatherDTO implements Serializable {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
     @NoArgsConstructor
+    @AllArgsConstructor
     public static class Coord implements Serializable {
         public Double lon;
         public Double lat;

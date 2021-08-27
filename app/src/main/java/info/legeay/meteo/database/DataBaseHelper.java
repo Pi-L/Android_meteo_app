@@ -115,7 +115,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 double lat = cursor.getDouble(cursor.getColumnIndex(CityContract.CityEntry.KEY_LAT));
                 double lon = cursor.getDouble(cursor.getColumnIndex(CityContract.CityEntry.KEY_LON));
 
-                cityList.add(new City(idDb, favPosition, id, name, weatherDescription, currentTemperature, weatherIconDrawableId, lat, lon));
+//                cityList.add(new City(idDb, favPosition, id, name, weatherDescription, currentTemperature, weatherIconDrawableId, lat, lon));
                 cursor.moveToNext();
             }
         }

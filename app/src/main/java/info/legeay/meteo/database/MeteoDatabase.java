@@ -21,7 +21,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
  * exportSchema : here false to avoid build warning - but true would be better (export schema into a directory)
  * [Note: When you modify the database schema, you'll need to update the version number and define a migration strategy]
  */
-@Database(entities = {City.class}, version = 1, exportSchema = false)
+@Database(entities = {City.class}, version = 1, exportSchema = true)
 public abstract class MeteoDatabase extends RoomDatabase {
 
     public abstract CityDAO cityDAO();

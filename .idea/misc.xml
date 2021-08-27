@@ -5,15 +5,21 @@
       <map>
         <entry key="../../../../../../../../layout/custom_preview.xml" value="0.2791666666666667" />
         <entry key="app/src/main/res/drawable/background_error.xml" value="0.33229166666666665" />
+        <entry key="app/src/main/res/drawable/ic_baseline_arrow_back_ios_24.xml" value="0.26666666666666666" />
+        <entry key="app/src/main/res/layout-w936dp/favorite_content.xml" value="0.1837431693989071" />
         <entry key="app/src/main/res/layout/activity_favorite.xml" value="0.25104166666666666" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_map.xml" value="0.23369565217391305" />
+        <entry key="app/src/main/res/layout/activity_maps.xml" value="0.18432971014492755" />
         <entry key="app/src/main/res/layout/content_main.xml" value="0.20471014492753623" />
         <entry key="app/src/main/res/layout/favorite_add_dialog.xml" value="0.2644927536231884" />
         <entry key="app/src/main/res/layout/favorite_content.xml" value="0.19972826086956522" />
         <entry key="app/src/main/res/layout/favorite_content_scrolling.xml" value="0.3203125" />
         <entry key="app/src/main/res/layout/favorite_item_city.xml" value="0.20471014492753623" />
         <entry key="app/src/main/res/layout/fragment_first.xml" value="0.2128623188405797" />
+        <entry key="app/src/main/res/layout/fragment_first2.xml" value="0.18432971014492755" />
         <entry key="app/src/main/res/layout/fragment_second.xml" value="0.2128623188405797" />
+        <entry key="app/src/main/res/layout/fragment_second2.xml" value="0.18432971014492755" />
         <entry key="app/src/main/res/menu/menu_main.xml" value="0.259375" />
       </map>
     </option>

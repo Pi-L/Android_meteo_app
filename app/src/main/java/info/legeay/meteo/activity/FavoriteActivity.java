@@ -10,8 +10,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -64,8 +66,17 @@ public class FavoriteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_favorite);
-//        this.deleteDatabase(DataBaseHelper.DATABASE_NAME);
-        //this.dataBaseHelper = new DataBaseHelper(this);
+
+        Toolbar myToolbar = findViewById(R.id.toolbar_favorite);
+        setSupportActionBar(myToolbar);
+        ActionBar actionBar = getSupportActionBar();
+
+        if(actionBar == null) Log.d("PILMETEOAPP", "action bar is null: ");
+        else {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_24);
+        }
+
         this.handler = new Handler();
         openWeatherMapAPIClient = new OpenWeatherMapAPIClient(this);
 

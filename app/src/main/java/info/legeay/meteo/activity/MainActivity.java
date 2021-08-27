@@ -112,10 +112,10 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         this.setEvents();
 
-        setPageVisibility();
-
+        //setPageVisibility();
 
         this.meteoDatabase = MeteoDatabase.getDatabase(this);
+
         this.cityDAO = meteoDatabase.cityDAO();
 
 //        this.locationPermission = new Permission(this, "coarse_location");
@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     protected void onStart() {
         super.onStart();
 
-        setPageVisibility();
+        //setPageVisibility();
 
         this.cityDAO.getFirstFavorite().subscribeOn(MeteoDatabase.dbScheduler)
                 .subscribe(favCity -> {
@@ -216,6 +216,10 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                         },
                         e -> {
                             Log.d("PILMETEOAPP","main onCreate: "+e.getMessage());
+                            if(!Network.isInternetAvailable(MainActivity.this)) {
+                                MainActivity.this.handler.post(MainActivity.this::setPageVisibility);
+                                return;
+                            }
                             requestPosition();
                         });
 
@@ -251,12 +255,20 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 || super.onSupportNavigateUp();
     }
 
-    private void setActivityData(City favCity) {
-        if(!Network.isInternetAvailable(this)) return;
+    private void setActivityData(@NonNull City favCity) {
 
         MainActivity.this.handler.post(() -> {
-            this.circularProgressIndicatorLoader.setVisibility(View.VISIBLE);
+            MainActivity.this.circularProgressIndicatorLoader.setVisibility(View.VISIBLE);
+            setUiData(favCity);
         });
+
+
+        if(!Network.isInternetAvailable(MainActivity.this)) {
+            MainActivity.this.handler.post(() -> {
+                MainActivity.this.circularProgressIndicatorLoader.setVisibility(View.GONE);
+            });
+            return;
+        }
 
         openWeatherMapAPIClient.weatherByCityId(favCity.getId(), response -> {
 

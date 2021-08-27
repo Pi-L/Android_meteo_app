@@ -65,7 +65,7 @@ public class OpenWeatherMapAPIClient {
     }
 
     public void weatherByCityId(Long cityId, Response.Listener<JSONObject> response) {
-        weatherByCityId(cityId, response, error -> { Log.d("PILMETEOAPP", error.getMessage()); });
+        weatherByCityId(cityId, response, error -> Log.d("PILMETEOAPP", String.format("client owm -> weatherByCityId : %s", error != null ? error.getMessage() : "error == null")));
     }
 
     public void weatherByCityId(Long cityId, Response.Listener<JSONObject> response, Response.ErrorListener errorListener) {

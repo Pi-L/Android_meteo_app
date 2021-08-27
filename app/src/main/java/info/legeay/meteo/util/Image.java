@@ -17,14 +17,7 @@ public class Image {
         int id = actualId / 100;
         int icon = R.drawable.weather_sunny_white;
 
-        long currentTime;
-        if(offset > 0) {
-            currentTime = OffsetDateTime.now(ZoneOffset.UTC).plusSeconds(offset).toEpochSecond();
-        } else {
-            currentTime = OffsetDateTime.now(ZoneOffset.UTC).minusSeconds(offset).toEpochSecond();
-        }
-
-        boolean isDay = currentTime >= sunrise && currentTime < sunset;
+        boolean isDay = Time.isDay(sunrise, sunset, offset);
 
         if (actualId == 800) {
             if (isDay) return R.drawable.weather_sunny_white;

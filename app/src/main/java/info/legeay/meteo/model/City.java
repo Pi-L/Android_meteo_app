@@ -1,6 +1,8 @@
 package info.legeay.meteo.model;
 
 
+import android.util.Log;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -8,6 +10,7 @@ import androidx.room.PrimaryKey;
 
 import java.util.Objects;
 
+import info.legeay.meteo.util.Time;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,7 +47,23 @@ public class City {
     @ColumnInfo(name = "lon")
     private double lon;
 
-    public City(Long idDb, Integer favPosition, Long id, String name, String weatherDescription, String currentTemperature, Integer weatherIconDrawableId, double lat, double lon) {
+    @ColumnInfo(name = "sunrise_ts_seconds")
+    private Long sunriseTsSeconds;
+    @ColumnInfo(name = "sunset_ts_seconds")
+    private Long sunsetTsSeconds;
+    @ColumnInfo(name = "utc_offset_seconds")
+    private Integer utcOffsetSeconds;
+
+
+    public boolean isDayTime() {
+
+        Log.d("PILMETEOAPP", "isDayTime: "+sunriseTsSeconds+" "+sunsetTsSeconds+" "+utcOffsetSeconds);
+
+        if(sunriseTsSeconds == null || sunsetTsSeconds  == null  || utcOffsetSeconds == null) return true;
+        return Time.isDay(sunriseTsSeconds, sunsetTsSeconds, utcOffsetSeconds);
+    }
+
+    public City(Long idDb, Integer favPosition, Long id, String name, String weatherDescription, String currentTemperature, Integer weatherIconDrawableId, double lat, double lon, Long sunriseTsSeconds, Long sunsetTsSeconds, Integer utcOffsetSeconds) {
         this.idDb = idDb;
         this.favPosition = favPosition;
         this.id = id;
@@ -54,11 +73,14 @@ public class City {
         this.weatherIconDrawableId = weatherIconDrawableId;
         this.lat = lat;
         this.lon = lon;
+        this.sunriseTsSeconds = sunriseTsSeconds;
+        this.sunsetTsSeconds = sunsetTsSeconds;
+        this.utcOffsetSeconds = utcOffsetSeconds;
     }
 
     // ignore: else Room can't pick
     @Ignore
-    public City(Long id, String name, String weatherDescription, String currentTemperature, Integer weatherIconDrawableId, double lat, double lon) {
+    public City(Long id, String name, String weatherDescription, String currentTemperature, Integer weatherIconDrawableId, double lat, double lon, Long sunriseTsSeconds, Long sunsetTsSeconds, Integer utcOffsetSeconds) {
         this.id = id;
         this.name = name;
         this.weatherDescription = weatherDescription;
@@ -66,18 +88,26 @@ public class City {
         this.weatherIconDrawableId = weatherIconDrawableId;
         this.lat = lat;
         this.lon = lon;
+        this.sunriseTsSeconds = sunriseTsSeconds;
+        this.sunsetTsSeconds = sunsetTsSeconds;
+        this.utcOffsetSeconds = utcOffsetSeconds;
     }
 
     @Override
     public String toString() {
         return "City{" +
-                "id=" + id +
+                "idDb=" + idDb +
+                ", favPosition=" + favPosition +
+                ", id=" + id +
                 ", name='" + name + '\'' +
                 ", weatherDescription='" + weatherDescription + '\'' +
                 ", currentTemperature='" + currentTemperature + '\'' +
-                ", weatherIconDrawableId='" + weatherIconDrawableId + '\'' +
+                ", weatherIconDrawableId=" + weatherIconDrawableId +
                 ", lat=" + lat +
                 ", lon=" + lon +
+                ", sunriseTsSeconds=" + sunriseTsSeconds +
+                ", sunsetTsSeconds=" + sunsetTsSeconds +
+                ", utcOffsetSeconds=" + utcOffsetSeconds +
                 '}';
     }
 
@@ -165,5 +195,29 @@ public class City {
 
     public void setLon(double lon) {
         this.lon = lon;
+    }
+
+    public Long getSunriseTsSeconds() {
+        return sunriseTsSeconds;
+    }
+
+    public void setSunriseTsSeconds(Long sunriseTsSeconds) {
+        this.sunriseTsSeconds = sunriseTsSeconds;
+    }
+
+    public Long getSunsetTsSeconds() {
+        return sunsetTsSeconds;
+    }
+
+    public void setSunsetTsSeconds(Long sunsetTsSeconds) {
+        this.sunsetTsSeconds = sunsetTsSeconds;
+    }
+
+    public Integer getUtcOffsetSeconds() {
+        return utcOffsetSeconds;
+    }
+
+    public void setUtcOffsetSeconds(Integer utcOffsetSeconds) {
+        this.utcOffsetSeconds = utcOffsetSeconds;
     }
 }

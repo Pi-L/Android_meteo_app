@@ -1,6 +1,7 @@
 package info.legeay.meteo.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,11 +15,17 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import info.legeay.meteo.R;
+import info.legeay.meteo.activity.FavoriteActivity;
+import info.legeay.meteo.activity.MapsActivity;
+import info.legeay.meteo.dto.GoogleMapActivityDTO;
+import info.legeay.meteo.dto.WeatherDTO;
 import info.legeay.meteo.model.City;
 import info.legeay.meteo.util.Network;
 
@@ -55,7 +62,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
     public int getItemCount() {return this.cityList == null ? 0 : this.cityList.size();}
 
     // Classe holder qui contient la vue d’un item
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public City city;
 
@@ -74,8 +81,27 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
             imageViewFavoriteCityWeather = (ImageView) view.findViewById(R.id.imageview_favorite_city_weather);
             textViewFavoriteCityTemperature = (TextView) view.findViewById(R.id.textview_favorite_city_temperature);
 
-//            view.setOnLongClickListener(this);
+            view.setOnClickListener(this);
 
+        }
+
+        @Override
+        public void onClick(View v) {
+            ObjectMapper mapper = new ObjectMapper();
+            Intent intent = new Intent(FavoriteAdapter.this.context, MapsActivity.class);
+
+            try {
+                GoogleMapActivityDTO googleMapActivityDTO = new GoogleMapActivityDTO(this.city.getName(),this.city.getLat(), this.city.getLon(), this.city.isDayTime());
+                String coord = mapper.writeValueAsString(googleMapActivityDTO);
+                Log.d("PILMETEOAPP", "adapter holder GoogleMapActivityDTO tiString: "+googleMapActivityDTO);
+                Log.d("PILMETEOAPP", "adapter holder mapper.writeValueAsString: "+coord);
+                intent.putExtra(String.format("%scoord", FavoriteActivity.KEY_PREFIX), coord);
+
+            } catch (JsonProcessingException e) {
+                Log.d("PILMETEOAPP", "adapter holder mapper.writeValueAsString: "+e.getMessage());
+            }
+
+            FavoriteAdapter.this.context.startActivity(intent);
         }
 
 
