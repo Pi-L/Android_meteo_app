@@ -20,10 +20,12 @@ public class OpenWeatherMapAPIClient {
 
 //    https://openweathermap.org/current
     private static final String BASE_WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather?";
+    private static final String BASE_ONE_CALL_URL = "https://api.openweathermap.org/data/2.5/onecall?";
 
     private final Context context;
     private final RequestQueue requestQueue;
     private final String weatherUrlTemplate;
+    private final String onecallDailyTemplate;
 
     public OpenWeatherMapAPIClient(Context context) {
         this.context = context;
@@ -31,6 +33,25 @@ public class OpenWeatherMapAPIClient {
 
         String languageCode = Locale.getDefault().getLanguage();
         this.weatherUrlTemplate = BASE_WEATHER_URL + "%s&units=metric&lang="+languageCode+"&appid=" + context.getString(R.string.owm_api_key);
+        this.onecallDailyTemplate = BASE_ONE_CALL_URL + "%s&units=metric&exclude=current,hourly,alerts&lang="+languageCode+"&appid=" + context.getString(R.string.owm_api_key);
+    }
+
+    private void oneCall(String urlParams, Response.Listener<JSONObject> response, Response.ErrorListener errorListener) {
+        String url = String.format(onecallDailyTemplate, urlParams);
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                response,
+                errorListener);
+
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    public void dailyByCoord(double lat, double lon, Response.Listener<JSONObject> response, Response.ErrorListener errorListener) {
+        String urlParams = String.format("lat=%s&lon=%s", lat, lon);
+        oneCall(urlParams, response, errorListener);
     }
 
     private void weather(String urlParams, Response.Listener<JSONObject> response, Response.ErrorListener errorListener) {

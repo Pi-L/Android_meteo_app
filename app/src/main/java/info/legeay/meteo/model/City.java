@@ -81,6 +81,8 @@ public class City {
     // ignore: else Room can't pick
     @Ignore
     public City(Long id, String name, String weatherDescription, String currentTemperature, Integer weatherIconDrawableId, double lat, double lon, Long sunriseTsSeconds, Long sunsetTsSeconds, Integer utcOffsetSeconds) {
+        Log.d("PILMETEOAPP", "City Constructor for dto - name: "+name+" - id:"+id);
+
         this.id = id;
         this.name = name;
         this.weatherDescription = weatherDescription;

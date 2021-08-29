@@ -25,8 +25,10 @@ import info.legeay.meteo.R;
 import info.legeay.meteo.client.OpenWeatherMapAPIClient;
 import info.legeay.meteo.dao.CityDAO;
 import info.legeay.meteo.database.MeteoDatabase;
+import info.legeay.meteo.dto.DailyWeatherDTO;
 import info.legeay.meteo.dto.WeatherDTO;
 import info.legeay.meteo.model.City;
+import info.legeay.meteo.model.DailyWeather;
 import info.legeay.meteo.util.Network;
 import info.legeay.meteo.util.Permission;
 
@@ -139,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                             setDefault();
 //                            requestPosition();
                         });
-
+        
     }
 
 
@@ -165,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
                 if(weatherDTO != null) {
                     City city = weatherDTO.toCity();
-                    setUiData(city);
+                    MainActivity.this.setUiData(city);
                 }
                 else Log.d("PILMETEOAPP", "weatherDTO == null");
 
@@ -174,7 +176,29 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             }
         });
 
-        // todo: manage on error
+        openWeatherMapAPIClient.dailyByCoord(favCity.getLat(), favCity.getLon(), 
+                response -> {
+                    ObjectMapper mapper = new ObjectMapper();
+                    try {
+                        DailyWeatherDTO dailyWeatherDTO = mapper.readValue(response.toString(), DailyWeatherDTO.class);
+                        int nextHourPrecipitationMm = dailyWeatherDTO.getTotalPrecipitationMmNextHour();
+
+                        if(dailyWeatherDTO != null) {
+                            List<DailyWeather> dailyWeatherList = dailyWeatherDTO.toDailyWeatherList();
+                            
+                            if(dailyWeatherList == null || dailyWeatherList.isEmpty()) return;
+                            MainActivity.this.setUiDailyForecast(dailyWeatherList, nextHourPrecipitationMm);
+                        }
+                        else Log.d("PILMETEOAPP", "dailyWeatherDTO == null");
+
+                    } catch (JsonProcessingException e) {
+                        Log.d("PILMETEOAPP", e.getMessage());
+                    }
+                },
+                error -> {
+                    Log.d("PILMETEOAPP", error.getMessage());
+                }
+            );
     }
 
     private void setUiData(City city) {
@@ -186,6 +210,43 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             MainActivity.this.textViewCityTemperature.setText(city.getCurrentTemperature());
             MainActivity.this.imageViewCityWeatherIcon.setImageResource(city.getWeatherIconDrawableId());
             MainActivity.this.circularProgressIndicatorLoader.setVisibility(View.GONE);
+        });
+    }
+
+    private void setUiDailyForecast(List<DailyWeather> dailyWeatherList, int nextHourPrecipitationMm) {
+        Log.d("PILMETEOAPP", "setUiDailyForecast: enter");
+
+        MainActivity.this.handler.post(() -> {
+            int[] tab = {R.id.item_forecast_1, R.id.item_forecast_2, R.id.item_forecast_3, R.id.item_forecast_4, R.id.item_forecast_5, R.id.item_forecast_6};
+
+            for (int i = 0; i < 6 && i < dailyWeatherList.size(); i++) {
+                DailyWeather dailyWeather = dailyWeatherList.get(i);
+                View view = findViewById(tab[i]);
+                ((TextView) view.findViewById(R.id.textview_forecast_item_date)).setText(dailyWeather.getDayMonth());
+                ((ImageView) view.findViewById(R.id.imageview_forecast_item_weather_icon)).setImageDrawable(getDrawable(dailyWeather.getWeatherIconDrawableId()));
+                ((TextView) view.findViewById(R.id.textview_forecast_item_temperature_avg_day)).setText(dailyWeather.getTemperatureAvgDay());
+                ((TextView) view.findViewById(R.id.textview_forecast_item_temperature_max)).setText(dailyWeather.getTemperatureMax());
+                ((TextView) view.findViewById(R.id.textview_forecast_item_temperature_min)).setText(dailyWeather.getTemperatureMin());
+                ((TextView) view.findViewById(R.id.textview_forecast_item_sunrise)).setText(dailyWeather.getSunriseTime());
+                ((TextView) view.findViewById(R.id.textview_forecast_item_sunset)).setText(dailyWeather.getSunsetTime());
+            }
+
+            ImageView imageviewWaterdrop1 = findViewById(R.id.imageview_main_waterdrop_1);
+            ImageView imageviewWaterdrop2 = findViewById(R.id.imageview_main_waterdrop_2);
+            ImageView imageviewWaterdrop3 = findViewById(R.id.imageview_main_waterdrop_3);
+
+            Log.d("PILMETEOAPP", "RAIIIINNNNNN: "+nextHourPrecipitationMm);
+
+
+            if(nextHourPrecipitationMm > 0) imageviewWaterdrop1.setVisibility(View.VISIBLE);
+            else imageviewWaterdrop1.setVisibility(View.GONE);
+
+            if(nextHourPrecipitationMm > 100) imageviewWaterdrop2.setVisibility(View.VISIBLE);
+            else imageviewWaterdrop2.setVisibility(View.GONE);
+
+            if(nextHourPrecipitationMm > 400) imageviewWaterdrop3.setVisibility(View.VISIBLE);
+            else imageviewWaterdrop3.setVisibility(View.GONE);
+
         });
     }
 

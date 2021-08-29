@@ -57,10 +57,8 @@ public class WeatherDTO implements Serializable {
 
 
         if(isWeatherArrayInitialised && weather[0].id != null && sys != null && sys.sunrise != null && sys.sunset != null && timezone != null) {
-            currentWeatherIconDrawableId = Image.getWeatherIcon(weather[0].id, sys.sunrise, sys.sunset, timezone);
+            currentWeatherIconDrawableId = Image.getWeatherIcon(weather[0].id, sys.sunrise, sys.sunset, (long) timezone);
         }
-
-
 
         String currentWheatherDescription = !isWeatherArrayInitialised || StringUtils.isBlank(this.weather[0].description) ? "Pas de description" : this.weather[0].description;
         if(timezone != null) currentWheatherDescription = String.format("%s (%s)", currentWheatherDescription, Time.getTimeFormated(timezone));

@@ -2,4 +2,5 @@
 <resources>
     <string name="internet_KO">Pas de connexion internet</string>
     <string name="city_desc">Ensoleillé</string>
+    <string name="forecast">Prévisions</string>
 </resources>

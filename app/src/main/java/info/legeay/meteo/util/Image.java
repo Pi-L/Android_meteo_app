@@ -12,12 +12,12 @@ public class Image {
     /*
      * Méthode qui initialise l'icon blanc présent dans la MainActivity
      * */
-    public static int getWeatherIcon(int actualId, long sunrise, long sunset, long offset) {
+    public static int getWeatherIcon(int actualId, Long sunrise, Long sunset, Long offset) {
 
         int id = actualId / 100;
         int icon = R.drawable.weather_sunny_white;
 
-        boolean isDay = Time.isDay(sunrise, sunset, offset);
+        boolean isDay = sunrise == null || sunset == null || offset == null || Time.isDay(sunrise, sunset, offset);
 
         if (actualId == 800) {
             if (isDay) return R.drawable.weather_sunny_white;
